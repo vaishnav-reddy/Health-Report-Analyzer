@@ -50,7 +50,7 @@
 - ✅ Reports stored in MongoDB with user isolation
 - ✅ JWT authentication with bcrypt password hashing
 - ✅ File uploads work (consider cloud storage for production files)
-- ✅ OCR processing works on Render
+- ✅ OCR processing works on Render with a robust, regex-based extractor
 - ⚠️ Set up MongoDB Atlas for production database
 
 ## MongoDB Setup
