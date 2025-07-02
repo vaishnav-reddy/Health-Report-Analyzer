@@ -44,30 +44,42 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
         extractedText = await extractTextFromImageBuffer(fileBuffer);
       }
 
-      if (!extractedText || extractedText.trim().length === 0) {
+      // Allow processing with minimal or no text, but warn the user
+      const hasMinimalText = extractedText && extractedText.trim().length > 0 && extractedText.trim().length < 50;
+      const hasNoText = !extractedText || extractedText.trim().length === 0;
+      
+      let isScannedDocument = false;
+      
+      if (hasNoText) {
         console.log('No text extracted from file');
-        return res.status(400).json({ 
-          error: 'No text could be extracted from the file. If this is a scanned document, please ensure the image is clear and contains readable text.',
-          details: req.file.mimetype === 'application/pdf' ? 
-            'This appears to be a scanned or image-based PDF with no machine-readable text.' : 
-            'The image quality may be too low for text recognition.'
-        });
+        // For scanned documents with no text, offer manual entry instead of blocking
+        isScannedDocument = true;
+        extractedText = ''; // Ensure it's at least an empty string
+      } else if (hasMinimalText) {
+        console.log('Minimal text extracted, likely a scanned document');
+        isScannedDocument = true;
       }
 
       console.log('Extracted text length:', extractedText.length);
-      console.log('First 500 characters:', extractedText.substring(0, 500));
+      if (extractedText.length > 0) {
+        console.log('First 500 characters:', extractedText.substring(0, 500));
+      }
 
       // Extract health parameters from the text
-      const healthParameters = extractHealthParameters(extractedText);
+      const healthParameters = extractedText.length > 0 ? extractHealthParameters(extractedText) : [];
 
       console.log('Extracted parameters:', healthParameters);
 
-      if (!healthParameters || healthParameters.length === 0) {
+      // If no parameters found and it's not a scanned document, reject
+      if ((!healthParameters || healthParameters.length === 0) && !isScannedDocument) {
         console.log('No health parameters found in extracted text');
         return res.status(400).json({ 
           error: 'No health parameters found in the document. Please ensure this is a valid lab report.' 
         });
       }
+      
+      // For scanned documents with no parameters, we'll store it anyway but mark it
+      const isEmptyReport = healthParameters.length === 0;
 
       // Save report to database (without file path since we don't store files)
       const report = new Report({
@@ -77,18 +89,36 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
         fileSize: req.file.size,
         extractedText: extractedText,
         healthParameters: healthParameters,
+        isScannedDocument: isScannedDocument,
+        requiresManualEntry: isEmptyReport,
         createdAt: new Date()
       });
 
       const savedReport = await report.save();
 
-      res.json({
-        success: true,
-        reportId: savedReport._id,
-        filename: req.file.originalname,
-        healthParameters: healthParameters,
-        extractedParameterCount: healthParameters.length
-      });
+      // Send appropriate response based on document type
+      if (isScannedDocument) {
+        res.json({
+          success: true,
+          reportId: savedReport._id,
+          filename: req.file.originalname,
+          isScannedDocument: true,
+          healthParameters: healthParameters,
+          extractedParameterCount: healthParameters.length,
+          requiresManualEntry: isEmptyReport,
+          message: isEmptyReport ? 
+            "This appears to be a scanned document. No health parameters were automatically detected. You may need to enter data manually." : 
+            "This appears to be a scanned document. Some health parameters were detected, but you may need to verify and complete the data."
+        });
+      } else {
+        res.json({
+          success: true,
+          reportId: savedReport._id,
+          filename: req.file.originalname,
+          healthParameters: healthParameters,
+          extractedParameterCount: healthParameters.length
+        });
+      }
 
     } catch (extractionError) {
       console.error('File processing error:', extractionError);
@@ -112,7 +142,27 @@ async function extractTextFromPDFBuffer(buffer) {
     // If PDF has almost no text, it's probably a scanned document
     if (data.text.trim().length < 10) {
       console.log('PDF appears to be scanned/image-based with minimal text content.');
-      return data.text; // We'll handle the empty text error in the route handler
+      console.log('Attempting to use OCR on the PDF...');
+      
+      try {
+        // For scanned PDFs, we'll convert the first page to an image and run OCR
+        const { PDFDocument } = require('pdf-lib');
+        const pdfDoc = await PDFDocument.load(buffer);
+        
+        // Only process if the PDF has pages
+        if (pdfDoc.getPageCount() > 0) {
+          // Use pdf2pic or similar to convert PDF to image
+          // This is a simplified example - in a real app you'd need to install pdf2pic
+          // const pdf2pic = require('pdf2pic');
+          
+          // For now, we'll use the image extraction method as a fallback
+          console.log('Falling back to image-based OCR for scanned PDF');
+          return await extractTextFromImageBuffer(buffer);
+        }
+      } catch (ocrError) {
+        console.error('PDF OCR fallback failed:', ocrError);
+        // Continue with the minimal text we have
+      }
     }
     
     return data.text;

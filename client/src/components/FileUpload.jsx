@@ -54,7 +54,22 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
         setUploadProgress(progress);
       });
 
-      onFileProcessed(result);
+      // Check if it's a scanned document that might need special handling
+      if (result.isScannedDocument) {
+        if (result.requiresManualEntry) {
+          // Still process the file but warn the user
+          onFileProcessed(result);
+          // Also show a warning message
+          onError('This appears to be a scanned document. No health parameters were automatically detected. You may need to enter the data manually.');
+        } else {
+          onFileProcessed(result);
+          // Also show a warning that data might be incomplete
+          onError('This appears to be a scanned document. Some health parameters were detected, but you may need to verify and complete the data.');
+        }
+      } else {
+        // Normal processing for digital documents
+        onFileProcessed(result);
+      }
     } catch (error) {
       console.error('File upload error:', error);
       

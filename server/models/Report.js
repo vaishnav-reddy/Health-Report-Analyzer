@@ -51,9 +51,17 @@ const reportSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  isScannedDocument: {
+    type: Boolean,
+    default: false
+  },
+  requiresManualEntry: {
+    type: Boolean,
+    default: false
+  },
   processingStatus: {
     type: String,
-    enum: ['processing', 'completed', 'failed'],
+    enum: ['processing', 'completed', 'failed', 'manual_entry_needed', 'manual_entry_completed'],
     default: 'completed'
   }
 }, {
