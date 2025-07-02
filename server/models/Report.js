@@ -40,7 +40,8 @@ const reportSchema = new mongoose.Schema({
   },
   extractedText: {
     type: String,
-    required: true
+    required: false,
+    default: '' // Allow empty string for unprocessable documents
   },
   healthParameters: [healthParameterSchema],
   fileSize: {
