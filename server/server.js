@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5000;
 // Configure CORS for frontend communication
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-vercel-app.vercel.app']  // Replace with your Vercel URL
+    ? ['https://your-vercel-app.vercel.app']  // Replace with Vercel URL
     : ['http://localhost:3000'],
   credentials: true
 };
