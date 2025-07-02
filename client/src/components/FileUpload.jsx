@@ -1,10 +1,22 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { uploadFile } from '../utils/api';
 
 const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [processingOcr, setProcessingOcr] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState(0);
+  const ocrTimerRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Clean up the timer when component unmounts
+  useEffect(() => {
+    return () => {
+      if (ocrTimerRef.current) {
+        clearInterval(ocrTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -49,10 +61,41 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
     try {
       onLoadingChange(true);
       setUploadProgress(0);
+      
+      // Start showing OCR processing simulation if it's a PDF (likely to need OCR)
+      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        setProcessingOcr(true);
+        setOcrProgress(0);
+        
+        // Simulate OCR progress for visual feedback
+        if (ocrTimerRef.current) {
+          clearInterval(ocrTimerRef.current);
+        }
+        
+        ocrTimerRef.current = setInterval(() => {
+          setOcrProgress(prev => {
+            // Slowly increment up to 95% (we'll hit 100% when done)
+            if (prev >= 95) {
+              return 95;
+            }
+            // Speed increases as we go to simulate OCR processing
+            const increment = prev < 30 ? 1 : (prev < 60 ? 0.5 : 0.2);
+            return prev + increment;
+          });
+        }, 500);
+      }
 
       const result = await uploadFile(file, (progress) => {
-        setUploadProgress(progress);
+        if (!processingOcr) {
+          setUploadProgress(progress);
+        }
       });
+      
+      // Clear any OCR simulation
+      if (ocrTimerRef.current) {
+        clearInterval(ocrTimerRef.current);
+        setOcrProgress(100); // Show 100% when done
+      }
 
       // Check if it's a scanned document that might need special handling
       if (result.isScannedDocument) {
@@ -78,12 +121,19 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
         onError('No readable text found in your file. Please upload a health report with clear text content or try a different file format.');
       } else if (error.message.includes('No health parameters found')) {
         onError('We couldn\'t identify any health parameters in this document. Please ensure this is a standard health/lab report.');
+      } else if (error.message.includes('timeout of')) {
+        onError('Processing is taking longer than expected. The server might still be analyzing your document. Please try again in a moment or upload a clearer document.');
       } else {
         onError(error.message || 'Failed to process file');
       }
     } finally {
       onLoadingChange(false);
       setUploadProgress(0);
+      setProcessingOcr(false);
+      setOcrProgress(0);
+      if (ocrTimerRef.current) {
+        clearInterval(ocrTimerRef.current);
+      }
     }
   };
 
@@ -105,7 +155,7 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
         <p>Drag and drop your PDF or image file here, or click to browse</p>
         <p className="file-types">Supported: PDF, JPEG, JPG, PNG (max 10MB)</p>
         
-        {uploadProgress > 0 && (
+        {uploadProgress > 0 && !processingOcr && (
           <div className="upload-progress">
             <div className="progress-bar">
               <div 
@@ -114,6 +164,19 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
               ></div>
             </div>
             <span>{uploadProgress}% uploaded</span>
+          </div>
+        )}
+        
+        {processingOcr && (
+          <div className="upload-progress">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${ocrProgress}%` }}
+              ></div>
+            </div>
+            <span>{ocrProgress < 100 ? 'Analyzing document with OCR...' : 'Analysis complete!'}</span>
+            <p className="ocr-note">OCR processing can take up to 2 minutes for complex documents</p>
           </div>
         )}
       </div>

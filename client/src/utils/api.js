@@ -6,7 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000, // 30 seconds for file uploads
+  timeout: 120000, // 120 seconds (2 minutes) for file uploads with OCR
 });
 
 // Add token to requests

@@ -144,6 +144,41 @@ button:hover {
   color: #c53030;
 }
 
+/* OCR Processing Styles */
+.ocr-note {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.progress-bar {
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  height: 0.75rem;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #3182ce, #805ad5);
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+/* Animation for OCR processing */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.upload-progress span {
+  display: inline-block;
+  animation: pulse 2s infinite ease-in-out;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   h1 {

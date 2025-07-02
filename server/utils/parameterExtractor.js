@@ -17,6 +17,7 @@ function cleanOcrText(text) {
     .replace(/Cholesterol\. Total/gi, 'Cholesterol, Total') // Normalizes parameter names
     .replace(/Trglycendeos/gi, 'Triglycerides') // Corrects common OCR misspellings
     .replace(/Leu ocyte/gi, 'Leukocyte') // Fixes spacing errors in names
+    .replace(/Caiculatea/gi, 'Calculated') // Fix common OCR error
     // Corrects values where a space is used instead of a decimal point (e.g., "42 20" -> "42.20")
     .replace(/(\d+)\s+(\d+)/g, '$1.$2');
 }
