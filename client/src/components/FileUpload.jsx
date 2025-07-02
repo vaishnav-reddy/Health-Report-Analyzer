@@ -78,11 +78,16 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
             if (prev >= 95) {
               return 95;
             }
-            // Speed increases as we go to simulate OCR processing
-            const increment = prev < 30 ? 1 : (prev < 60 ? 0.5 : 0.2);
+            // Slower progression for longer timeouts (5 min)
+            // Start faster and gradually slow down
+            const increment = 
+              prev < 20 ? 0.8 : 
+              prev < 40 ? 0.5 : 
+              prev < 60 ? 0.3 : 
+              prev < 80 ? 0.2 : 0.1;
             return prev + increment;
           });
-        }, 500);
+        }, 1000);
       }
 
       const result = await uploadFile(file, (progress) => {
@@ -176,7 +181,7 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
               ></div>
             </div>
             <span>{ocrProgress < 100 ? 'Analyzing document with OCR...' : 'Analysis complete!'}</span>
-            <p className="ocr-note">OCR processing can take up to 2 minutes for complex documents</p>
+            <p className="ocr-note">OCR processing can take up to 5 minutes for complex documents</p>
           </div>
         )}
       </div>
