@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { login, register } from '../utils/api';
 
 const AuthForm = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -24,20 +25,13 @@ const AuthForm = ({ onLogin }) => {
     setError('');
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const payload = isLogin 
-        ? { email: formData.email, password: formData.password }
-        : formData;
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
+      let data;
+      
+      if (isLogin) {
+        data = await login(formData.email, formData.password);
+      } else {
+        data = await register(formData);
+      }
 
       if (data.success) {
         localStorage.setItem('token', data.token);
@@ -47,7 +41,7 @@ const AuthForm = ({ onLogin }) => {
         setError(data.error || 'Authentication failed');
       }
     } catch (error) {
-      setError('Network error. Please try again.');
+      setError(error.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }
