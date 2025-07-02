@@ -47,7 +47,10 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
       if (!extractedText || extractedText.trim().length === 0) {
         console.log('No text extracted from file');
         return res.status(400).json({ 
-          error: 'No text could be extracted from the file. Please ensure the image is clear and contains readable text.' 
+          error: 'No text could be extracted from the file. If this is a scanned document, please ensure the image is clear and contains readable text.',
+          details: req.file.mimetype === 'application/pdf' ? 
+            'This appears to be a scanned or image-based PDF with no machine-readable text.' : 
+            'The image quality may be too low for text recognition.'
         });
       }
 
@@ -105,10 +108,17 @@ async function extractTextFromPDFBuffer(buffer) {
   try {
     const data = await pdfParse(buffer);
     console.log('PDF text extraction successful, length:', data.text.length);
+    
+    // If PDF has almost no text, it's probably a scanned document
+    if (data.text.trim().length < 10) {
+      console.log('PDF appears to be scanned/image-based with minimal text content.');
+      return data.text; // We'll handle the empty text error in the route handler
+    }
+    
     return data.text;
   } catch (error) {
     console.error('PDF extraction error:', error);
-    throw new Error('Failed to extract text from PDF');
+    throw new Error('Failed to extract text from PDF: ' + error.message);
   }
 }
 

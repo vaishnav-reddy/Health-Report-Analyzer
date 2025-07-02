@@ -87,11 +87,12 @@ export const uploadFile = async (file, onProgress) => {
 
     return response.data;
   } catch (error) {
-    throw new Error(
+    console.error('Upload error details:', error.response?.data);
+    const errorMessage = 
       error.response?.data?.error || 
       error.response?.data?.details || 
-      'Failed to upload file'
-    );
+      'Failed to upload file';
+    throw new Error(errorMessage);
   }
 };
 

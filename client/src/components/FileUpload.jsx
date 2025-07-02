@@ -56,7 +56,16 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
 
       onFileProcessed(result);
     } catch (error) {
-      onError(error.message || 'Failed to process file');
+      console.error('File upload error:', error);
+      
+      // Provide more helpful messages based on common issues
+      if (error.message.includes('No text could be extracted')) {
+        onError('No readable text found in your file. Please upload a health report with clear text content or try a different file format.');
+      } else if (error.message.includes('No health parameters found')) {
+        onError('We couldn\'t identify any health parameters in this document. Please ensure this is a standard health/lab report.');
+      } else {
+        onError(error.message || 'Failed to process file');
+      }
     } finally {
       onLoadingChange(false);
       setUploadProgress(0);
