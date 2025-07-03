@@ -4,7 +4,7 @@
   "description": "Backend server for Health Report Analyzer",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node --max-old-space-size=384 --optimize-for-size server.js",
     "dev": "nodemon server.js",
     "build": "echo 'No build step needed for server'"
   },
@@ -20,7 +20,6 @@
     "mongoose": "^8.0.3",
     "multer": "^1.4.5-lts.1",
     "natural": "^8.1.0",
-    "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1",
     "sharp": "^0.34.2",
     "string-similarity": "^4.0.4",

@@ -183,30 +183,21 @@ async function extractTextFromPDFBuffer(buffer) {
       console.log('Attempting to use OCR on the PDF...');
       
       try {
-        // For scanned PDFs, we'll convert the first page to an image and run OCR
-        const { PDFDocument } = require('pdf-lib');
-        const pdfDoc = await PDFDocument.load(buffer);
+        // Skip PDFDocument loading to save memory - go straight to OCR
+        console.log('Attempting image-based OCR for scanned PDF');
         
-        // Only process if the PDF has pages
-        if (pdfDoc.getPageCount() > 0) {
-          // Use pdf2pic or similar to convert PDF to image
-          // This is a simplified example - in a real app you'd need to install pdf2pic
-          // const pdf2pic = require('pdf2pic');
-          
-          // For now, we'll use the image extraction method as a fallback
-          console.log('Falling back to image-based OCR for scanned PDF');
-          try {
-            const ocrText = await extractTextFromImageBuffer(buffer);
-            if (ocrText && ocrText.trim().length > 0) {
-              return ocrText;
-            } else {
-              // If OCR didn't find anything, return a space to avoid validation errors
-              return ' ';
-            }
-          } catch (innerOcrError) {
-            console.error('PDF OCR inner extraction failed:', innerOcrError);
-            return ' '; // Return space to avoid validation errors
+        try {
+          // Process directly without additional PDF parsing
+          const ocrText = await extractTextFromImageBuffer(buffer);
+          if (ocrText && ocrText.trim().length > 0) {
+            return ocrText;
+          } else {
+            // If OCR didn't find anything, return a space to avoid validation errors
+            return ' ';
           }
+        } catch (innerOcrError) {
+          console.error('PDF OCR extraction failed:', innerOcrError);
+          return ' '; // Return space to avoid validation errors
         }
       } catch (ocrError) {
         console.error('PDF OCR fallback failed:', ocrError);
@@ -226,44 +217,46 @@ async function extractTextFromPDFBuffer(buffer) {
 // Helper function to extract text from image buffer using Tesseract OCR
 async function extractTextFromImageBuffer(buffer) {
   try {
-    console.log('Starting advanced OCR processing for lab reports...');
+    console.log('Starting OCR processing...');
     
     // Get image metadata for better processing decisions
     const metadata = await sharp(buffer).metadata();
-    console.log(`Image info: ${metadata.width}x${metadata.height}, ${metadata.format}, ${metadata.channels} channels`);
     
-    // Advanced preprocessing methods specifically optimized for lab reports
+    // Determine optimal processing based on image size
+    // For large images, we'll use more aggressive downsampling
+    const isLargeImage = metadata.width > 2000 || metadata.height > 2000;
+    const maxDimension = isLargeImage ? 2000 : Math.max(metadata.width, metadata.height);
+    
+    // Use fewer preprocessing methods to save time and memory
     const preprocessingMethods = [
-      // Method 1: Medical document optimized - high DPI with noise reduction
+      // Method 1: Optimized for medical documents with tables
       {
         name: 'Medical Document',
         process: () => sharp(buffer)
           .resize({ 
-            width: Math.max(3500, metadata.width * 2), 
-            height: Math.max(3500, metadata.height * 2), 
+            width: maxDimension, 
+            height: maxDimension, 
             fit: 'inside',
-            kernel: sharp.kernel.lanczos3 // Better upscaling
+            withoutEnlargement: false
           })
           .grayscale()
-          .median(2) // Remove salt and pepper noise
           .normalize() // Auto-adjust contrast
           .linear(1.3, -35) // Enhance contrast specifically for text
-          .threshold(128, { grayscale: false }) // Clean binary threshold
-          .png({ quality: 100, compressionLevel: 0 })
+          .threshold(128) // Clean binary threshold
+          .png({ compressionLevel: 6 }) // Use compression to save memory
           .toBuffer()
       },
       // Method 2: Table structure preservation
       {
         name: 'Table Preserving',
         process: () => sharp(buffer)
-          .resize({ width: 4000, height: 4000, fit: 'inside', withoutEnlargement: false })
+          .resize({ width: maxDimension, height: maxDimension, fit: 'inside', withoutEnlargement: false })
           .grayscale()
-          .blur(0.5) // Very slight blur to connect broken characters
-          .sharpen({ sigma: 1.2, m1: 0, m2: 3, x1: 3, y2: 15, y3: 30 })
+          .sharpen()
           .normalize()
-          .modulate({ brightness: 1.15, saturation: 0 })
+          .modulate({ brightness: 1.15 })
           .linear(1.4, -40) // Strong contrast
-          .png({ quality: 100 })
+          .png({ compressionLevel: 6 })
           .toBuffer()
       },
       // Method 3: Adaptive enhancement for poor quality scans
@@ -297,35 +290,23 @@ async function extractTextFromImageBuffer(buffer) {
     let bestResult = { text: '', confidence: 0, method: '', processedCount: 0 };
     let allResults = [];
 
-    // Try each preprocessing method with enhanced OCR configurations
+    // Try each preprocessing method with optimized OCR configuration
     for (const method of preprocessingMethods) {
       try {
         console.log(`Processing with method: ${method.name}`);
         const processedBuffer = await method.process();
 
-        // Multiple OCR passes with different configurations
+        // Use a single optimized OCR config instead of multiple passes
         const ocrConfigs = [
-          // Config 1: Optimized for medical/lab reports
+          // Single optimized config for medical/lab reports
           {
-            name: 'Lab Report Optimized',
+            name: 'Optimized',
             options: {
               tessedit_pageseg_mode: Tesseract.PSM.AUTO,
               tessedit_ocr_engine_mode: Tesseract.OEM.LSTM_ONLY,
               tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,()-/:% <>',
               preserve_interword_spaces: '1',
-              tessedit_write_images: '0',
-              user_defined_dpi: '300'
-            }
-          },
-          // Config 2: Table-focused
-          {
-            name: 'Table Focused',
-            options: {
-              tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK,
-              tessedit_ocr_engine_mode: Tesseract.OEM.DEFAULT,
-              preserve_interword_spaces: '1',
-              user_defined_dpi: '300',
-              tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,()-/:% <>'
+              tessedit_write_images: '0'
             }
           }
         ];
@@ -335,7 +316,12 @@ async function extractTextFromImageBuffer(buffer) {
             const { data: { text, confidence } } = await Tesseract.recognize(processedBuffer, 'eng', {
               logger: m => {
                 if (m.status === 'recognizing text') {
-                  console.log(`[${method.name}-${config.name}] OCR Progress: ${Math.round(m.progress * 100)}%`);
+                  // Only log start and completion to reduce console output
+                  if (m.progress === 0) {
+                    console.log(`OCR started for ${method.name}`);
+                  } else if (m.progress >= 0.99) {
+                    console.log(`OCR completed for ${method.name}`);
+                  }
                 }
               },
               ...config.options
@@ -390,45 +376,16 @@ async function extractTextFromImageBuffer(buffer) {
       }
     }
 
-    // If results are still poor, try a final desperate attempt with different settings
-    if (bestResult.confidence < 50 && bestResult.text.length < 200) {
-      console.log('Attempting final fallback OCR with relaxed settings...');
-      try {
-        const desperation = await sharp(buffer)
-          .resize({ width: 5000, height: 5000, fit: 'inside' })
-          .grayscale()
-          .normalize()
-          .modulate({ brightness: 1.2 })
-          .png({ quality: 100 })
-          .toBuffer();
+    // Skip desperate fallback attempt to save memory and processing time
+    // If we have any reasonable text, just use it
 
-        const { data: { text: desperateText } } = await Tesseract.recognize(desperation, 'eng', {
-          tessedit_pageseg_mode: Tesseract.PSM.AUTO,
-          tessedit_ocr_engine_mode: Tesseract.OEM.DEFAULT,
-          preserve_interword_spaces: '1',
-          tessedit_char_whitelist: '', // No whitelist - allow all characters
-          user_defined_dpi: '150'
-        });
-
-        if (desperateText.length > bestResult.text.length && desperateText.length > 50) {
-          console.log('Fallback method yielded better results');
-          bestResult.text = desperateText;
-          bestResult.method += ' + Fallback';
-        }
-      } catch (desperateError) {
-        console.error('Final fallback OCR failed:', desperateError.message);
-      }
+    // Simple completion log
+    console.log(`OCR processing complete. Text length: ${bestResult.text.length}`);
+    
+    // Return early if no meaningful text was found
+    if (bestResult.text.length < 10) {
+      return ' '; // Return space to avoid validation errors
     }
-
-    // Log summary of all attempts
-    console.log(`\n=== OCR PROCESSING SUMMARY ===`);
-    console.log(`Processed ${bestResult.processedCount} OCR attempts`);
-    console.log(`Best method: ${bestResult.method}`);
-    console.log(`Best score: ${bestResult.confidence.toFixed(1)}`);
-    console.log(`Final text length: ${bestResult.text.length}`);
-    console.log(`Text preview (first 300 chars):`);
-    console.log(bestResult.text.substring(0, 300));
-    console.log(`=== END SUMMARY ===\n`);
 
     return bestResult.text;
 
