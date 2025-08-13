@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { forgotPassword } from "../utils/api";
 
 const ForgotPassword = () => {
@@ -24,35 +25,64 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "auto", padding: "1rem" }}>
-      <h2>Forgot Password</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ width: "100%", padding: "8px", marginBottom: "1rem" }}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "8px",
-            background: "#007bff",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          {loading ? "Sending..." : "Send Reset Link"}
-        </button>
-      </form>
-      {message && (
-        <p style={{ marginTop: "1rem", color: "green" }}>{message}</p>
-      )}
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Forgot Password</h2>
+          <p>Enter your email to receive a reset link</p>
+        </div>
+
+        {message && (
+          <div className={message.includes("sent") ? "auth-message" : "auth-error"}>
+            {message.includes("sent") ? "✅" : "❌"} {message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn-auth-submit"
+            disabled={loading}
+          >
+            {loading ? (
+              <span>
+                <span className="spinner-small"></span>
+                Sending...
+              </span>
+            ) : (
+              "Send Reset Link"
+            )}
+          </button>
+        </form>
+
+        <div className="auth-toggle">
+          <p>
+            Remember your password?{" "}
+            <Link to="/" className="btn-toggle" style={{ textDecoration: "none" }}>
+              Sign in
+            </Link>
+          </p>
+        </div>
+
+        <div className="auth-demo">
+          <p className="demo-notice">
+            🔒 <strong>Secure Reset:</strong> If your email exists in our system, you'll receive a secure password reset link.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
