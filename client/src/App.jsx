@@ -157,7 +157,7 @@ function App() {
           <Route 
             path="/" 
             element={
-              user ? <Navigate to="/dashboard" /> : <LandingPage />
+              user ? <Navigate to="/dashboard" /> : <LandingPage user={user} />
             } 
           />
           

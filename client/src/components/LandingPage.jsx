@@ -3,15 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import { FileText, Shield, Zap, TrendingUp, Clock } from 'lucide-react';
 import '../styles/landing.css'
 
-export default function LandingPage() {
+export default function LandingPage({ user }) {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    navigate('/login');
+    // If user is already logged in, go to dashboard
+    // If not logged in, go to login page
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/login');
+    }
   };
 
   const handleGetStartedClick = () => {
-    navigate('/login');
+    // If user is already logged in, go to dashboard
+    // If not logged in, go to login page
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/login');
+    }
   };
 
   return (
@@ -24,7 +36,7 @@ export default function LandingPage() {
             <h1 className="landing-logo-text">Health Report Analyzer</h1>
           </div>
           <button className="landing-login-button" onClick={handleLoginClick}>
-            Login
+            {user ? `Welcome, ${user.firstName}` : "Login"}
           </button>
         </div>
       </header>
@@ -42,7 +54,7 @@ export default function LandingPage() {
           </p>
           <div className="landing-hero-button-container">
             <button className="landing-primary-button" onClick={handleGetStartedClick}>
-              Get Started Free
+              {user ? "Go to Dashboard" : "Get Started Free"}
             </button>
           </div>
         </div>
@@ -168,7 +180,7 @@ export default function LandingPage() {
           </p>
           <div className="landing-cta-button-container">
             <button className="landing-primary-button" onClick={handleGetStartedClick}>
-              Start Free Analysis
+              {user ? "Continue to Dashboard" : "Start Free Analysis"}
             </button>
           </div>
         </div>
