@@ -50,7 +50,9 @@
 
 <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%">
 
-![GSSoC Logo](client/src/gssoc-logo.png)
+<div align="center" style="background-color: white; padding: 20px; border-radius: 10px; display: inline-block;">
+  <img src="client/src/gssoc-logo.png" alt="GSSoC Logo" style="max-width: 300px; height: auto;">
+</div>
 
 🌟 **Exciting News...**
 
