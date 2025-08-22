@@ -185,17 +185,6 @@ export default function LandingPage({ user }) {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="landing-footer">
-        <div className="landing-footer-content">
-          <div className="landing-footer-text">
-            <p className="landing-footer-copyright">
-              © 2024 Health Report Analyzer. Empowering better health decisions through technology.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

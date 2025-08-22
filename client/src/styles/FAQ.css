@@ -1,15 +1,16 @@
-.faq-section { 
-  max-width: 700px;   /* 🔥 narrower section */
-  margin: auto;
-  padding: 20px;
+.faq-container { 
+  width: 100%;
+  margin: 1rem auto;
+  padding: 30px;
   text-align: center;
 }
 
-.faq-section h2 {
-  color: #e63946;
-  font-size: 26px;
+.faq-container h2 {
+  color: white;
+  font-size:xx-large;
   margin-bottom: 18px;
   font-weight: bold;
+  padding-bottom: 1rem;
 }
 
 .faq-item {
@@ -50,7 +51,7 @@
   line-height: 1.5;
 }
 
-.faq-item.active {
+.faq-item.open {
   border-left: 5px solid #e63946;
   background: #fff9f9;
 }
