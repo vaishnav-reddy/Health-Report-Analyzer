@@ -7,6 +7,7 @@ const AuthForm = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
     firstName: "",
     lastName: "",
   });
@@ -25,12 +26,26 @@ const AuthForm = ({ onLogin }) => {
     setLoading(true);
     setError("");
 
+    // Validate password confirmation for signup
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
     try {
       let data;
       if (isLogin) {
         data = await login(formData.email, formData.password);
       } else {
-        data = await register(formData);
+        // Only send required fields for registration
+        const registerData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        };
+        data = await register(registerData);
       }
 
       if (data.success) {
@@ -53,6 +68,7 @@ const AuthForm = ({ onLogin }) => {
     setFormData({
       email: "",
       password: "",
+      // confirmPassword: " ",
       firstName: "",
       lastName: "",
     });
@@ -136,6 +152,22 @@ const AuthForm = ({ onLogin }) => {
               </small>
             )}
           </div>
+
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                placeholder="Confirm your password"
+                minLength={6}
+              />
+            </div>
+          )}
 
           <button
             type="submit"

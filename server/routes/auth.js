@@ -18,10 +18,10 @@ const generateToken = (userId) => {
 // Register new user
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, confirm_password, firstName, lastName } = req.body;
 
     // Validation
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !confirm_password || !firstName || !lastName) {
       return res.status(400).json({
         error: 'All fields are required'
       });
@@ -30,6 +30,12 @@ router.post('/register', async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({
         error: 'Password must be at least 6 characters'
+      });
+    }
+
+    if (password !== confirm_password) {
+      return res.status(400).json({
+        error: 'Passwords do not match'
       });
     }
 
