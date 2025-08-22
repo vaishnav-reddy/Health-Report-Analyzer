@@ -44,6 +44,7 @@ const AuthForm = ({ onLogin }) => {
           lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
+          confirm_password: formData.confirmPassword, // Added to match server expectation
         };
         data = await register(registerData);
       }
@@ -68,7 +69,7 @@ const AuthForm = ({ onLogin }) => {
     setFormData({
       email: "",
       password: "",
-      // confirmPassword: " ",
+      confirmPassword: "",
       firstName: "",
       lastName: "",
     });
