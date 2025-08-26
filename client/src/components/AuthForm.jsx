@@ -39,6 +39,14 @@ const EyeOffIcon = ({ size = 20, color = "#6b7280" }) => (
   </svg>
 );
 
+import GoogleButton from "react-google-button";
+import {auth,provider,signInWithPopup} from "../components/firebase"
+
+const validatePassword = (password) => {
+  const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+  return strongRegex.test(password);
+};
+
 const AuthForm = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -62,18 +70,51 @@ const AuthForm = ({ onLogin }) => {
     });
   };
 
+  const handleGoogleSignIn = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = {
+      firstName: result.user.displayName.split(" ")[0],
+      lastName: result.user.displayName.split(" ")[1] || "",
+      email: result.user.email,
+    };
+
+    // Save token and user locally
+    const token = await result.user.getIdToken();
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    onLogin(user, token);
+  } catch (error) {
+    setError("Google sign-in failed. Please try again.");
+  }
+};
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     // Validate password confirmation for signup
-    if (!isLogin && formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    if (!isLogin) {
+  // Check password match
+  if (formData.password !== formData.confirmPassword) {
+    setError("Passwords do not match");
+    setLoading(false);
+    return;
+  }
+
+    // Validate strong password
+    if (!validatePassword(formData.password)) {
+      setError(
+        "Password must be at least 8 characters, include uppercase, lowercase, number, and special character."
+      );
       setLoading(false);
       toast.error("Passwords do not match");
       return;
     }
+  }
+
 
     try {
       let data;
@@ -145,6 +186,7 @@ const AuthForm = ({ onLogin }) => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           {/* Register fields */}
+          
           {!isLogin && (
             <div className="form-row">
               <div className="form-group">
@@ -186,6 +228,7 @@ const AuthForm = ({ onLogin }) => {
               placeholder="Enter your email"
             />
           </div>
+          
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
@@ -266,6 +309,9 @@ const AuthForm = ({ onLogin }) => {
             </div>
           )}
         </form>
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
+            <GoogleButton onClick={handleGoogleSignIn} />
+          </div>
 
         <div className="auth-toggle">
           <p>
