@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { login, register } from "../utils/api";
 import { toast } from 'react-toastify';
 import "../styles/AuthForm.css";
+import GoogleButton from "react-google-button";
+import { auth, provider, signInWithPopup } from "./firebase.jsx";
 
 // SVG Icon for password visibility toggle
 const EyeIcon = ({ size = 20, color = "#6b7280" }) => (
@@ -38,9 +40,6 @@ const EyeOffIcon = ({ size = 20, color = "#6b7280" }) => (
     <line x1="1" y1="1" x2="23" y2="23"></line>
   </svg>
 );
-
-import GoogleButton from "react-google-button";
-import {auth,provider,signInWithPopup} from "../components/firebase"
 
 const validatePassword = (password) => {
   const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
@@ -110,7 +109,7 @@ const AuthForm = ({ onLogin }) => {
         "Password must be at least 8 characters, include uppercase, lowercase, number, and special character."
       );
       setLoading(false);
-      toast.error("Passwords do not match");
+      toast.error("Password does not meet security requirements");
       return;
     }
   }
@@ -241,7 +240,7 @@ const AuthForm = ({ onLogin }) => {
                 onChange={handleChange}
                 required
                 placeholder="Enter your password"
-                minLength={6}
+                minLength={8}
               />
               <span
                 className="password-toggle-icon"
@@ -252,7 +251,7 @@ const AuthForm = ({ onLogin }) => {
             </div>
             {!isLogin && (
               <small className="form-hint">
-                Password must be at least 6 characters
+                Password must be at least 8 characters, include uppercase, lowercase, number, and special character.
               </small>
             )}
           </div>
@@ -269,7 +268,7 @@ const AuthForm = ({ onLogin }) => {
                   onChange={handleChange}
                   required
                   placeholder="Confirm your password"
-                  minLength={6}
+                  minLength={8}
                 />
                 <span
                   className="password-toggle-icon"
