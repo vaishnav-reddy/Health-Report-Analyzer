@@ -123,15 +123,6 @@ const AuthForm = ({ onLogin }) => {
   return (
     <div className="auth-container">
       <style>{`
-        .auth-container {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f3f4f6;
-            padding: 1rem;
-        }
         .auth-card {
             background-color: #ffffff;
             border-radius: 0.75rem;
