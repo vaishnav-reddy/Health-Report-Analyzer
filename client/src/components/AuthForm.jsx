@@ -308,9 +308,9 @@ const AuthForm = ({ onLogin }) => {
             </div>
           )}
         </form>
-        <div style={{ marginTop: "10px", textAlign: "center" }}>
-            <GoogleButton onClick={handleGoogleSignIn} />
-          </div>
+        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
+          <GoogleButton onClick={handleGoogleSignIn} />
+        </div>
 
         <div className="auth-toggle">
           <p>
