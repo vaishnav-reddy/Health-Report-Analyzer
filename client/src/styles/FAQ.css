@@ -25,7 +25,7 @@
 
   /* 🔥 medium card size */
   width: 80%;         /* reduce width */
-  min-height: 100px;  /* reduce height */
+  min-height: 60px;  /* reduce height */
   max-width: 600px;   /* keeps it medium */
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@
 }
 
 .faq-item h4 {
-  margin: 0;
+  margin-bottom: 0rem;
   color:black;
   font-size: 18px;
   font-weight: bold;
