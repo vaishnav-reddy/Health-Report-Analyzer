@@ -27,7 +27,7 @@ const ResetPassword = () => {
       setSuccess(true);
       // Redirect to login after 3 seconds
       setTimeout(() => {
-        navigate('/');
+        navigate('/login');
       }, 3000);
     } catch (error) {
       setMessage(error.message);
@@ -107,8 +107,14 @@ const ResetPassword = () => {
           <div className="auth-toggle">
             <p>
               Remember your password?{" "}
-              <Link to="/" className="btn-toggle" style={{ textDecoration: "none" }}>
+              <Link to="/login" className="btn-toggle" style={{ textDecoration: "none" }}>
                 Sign in
+              </Link>
+            </p>
+            <p>
+              
+              <Link to="/" className="btn-toggle" style={{ textDecoration: "none" }}>
+                Back to Home
               </Link>
             </p>
           </div>

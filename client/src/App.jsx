@@ -127,7 +127,7 @@ function Dashboard({ user, setUser }) {
 function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-
+  const navigate=useNavigate();
   // Check for existing user session when app loads
   useEffect(() => {
     const checkAuth = async () => {
@@ -155,6 +155,7 @@ function App() {
 
   const handleLogin = (userData, token) => {
     setUser(userData);
+    navigate("/");
   };
 
   // Display loading screen while checking authentication status

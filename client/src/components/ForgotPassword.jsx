@@ -76,6 +76,12 @@ const ForgotPassword = () => {
               Sign in
             </Link>
           </p>
+          <p>
+            
+            <Link to="/" className="btn-toggle" style={{ textDecoration: "none" }}>
+               Back to Home
+            </Link>
+          </p>
         </div>
 
         <div className="auth-demo">

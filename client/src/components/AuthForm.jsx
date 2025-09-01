@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import { login, register } from "../utils/api";
 import { toast } from 'react-toastify';
 import "../styles/AuthForm.css";
@@ -65,6 +65,8 @@ const [passwordChecks, setPasswordChecks] = useState({
   number: false,
   special: false,
 });
+
+const navigate=useNavigate();
 
 // Track password changes live
 const handlePasswordChange = (e) => {
@@ -169,6 +171,7 @@ const handlePasswordChange = (e) => {
         }
         
         onLogin(data.user, data.token);
+        navigate("/");
       } else {
         const errorMessage = data.error || "Authentication failed";
         setError(errorMessage);
