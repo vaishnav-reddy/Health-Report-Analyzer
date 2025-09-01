@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthForm from './components/AuthForm';
@@ -127,7 +127,7 @@ function Dashboard({ user, setUser }) {
 function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const navigate=useNavigate();
+  
   // Check for existing user session when app loads
   useEffect(() => {
     const checkAuth = async () => {
@@ -155,7 +155,7 @@ function App() {
 
   const handleLogin = (userData, token) => {
     setUser(userData);
-    navigate("/");
+    // No navigation needed here, the Route will handle it with the Navigate component
   };
 
   // Display loading screen while checking authentication status
