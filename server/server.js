@@ -9,13 +9,13 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Increase server timeout for OCR processing (5 minutes)
-app.timeout = 600000;
+// Set server timeout to 5 minutes for OCR processing
+app.timeout = 300000;
 
 // Configure CORS for frontend communication
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://health-report-analyzer.vercel.app']
+    ? ['https://health-report-analyzer.vercel.app', 'https://health-report-analyzer.onrender.com']
     : ['http://localhost:3000'],
   credentials: true
 };

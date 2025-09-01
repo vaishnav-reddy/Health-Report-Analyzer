@@ -46,11 +46,11 @@ const reportSchema = new mongoose.Schema({
   healthParameters: [healthParameterSchema],
   fileSize: {
     type: Number,
-    required: false
+    required: true
   },
   fileType: {
     type: String,
-    required: false
+    required: true
   },
   isScannedDocument: {
     type: Boolean,

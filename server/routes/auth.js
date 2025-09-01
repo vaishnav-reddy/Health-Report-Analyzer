@@ -9,7 +9,11 @@ const router = express.Router();
 
 const generateToken = (userId) => {
   return jwt.sign(
-    { userId },
+    { 
+      userId,
+      iat: Math.floor(Date.now() / 1000),
+      type: 'access'
+    },
     process.env.JWT_SECRET,
     { expiresIn: process.env.SESSION_EXPIRE || '7d' }
   );
@@ -27,9 +31,11 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    if (password.length < 6) {
+    // Check for strong password (match client-side validation)
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if (!strongPasswordRegex.test(password)) {
       return res.status(400).json({
-        error: 'Password must be at least 6 characters'
+        error: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character'
       });
     }
 
@@ -197,8 +203,9 @@ router.post("/reset-password/:token", async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    // Use the same salt rounds as in registration (12)
+    const saltRounds = 12;
+    user.password = await bcrypt.hash(password, saltRounds);
     user.resetPasswordToken = null;
     user.resetPasswordExpire = null;
 
@@ -240,6 +247,53 @@ router.get('/me', async (req, res) => {
     console.error('Token verification failed');
     res.status(401).json({
       error: 'Invalid token'
+    });
+  }
+});
+
+// Google Authentication
+router.post('/google-auth', async (req, res) => {
+  try {
+    const { email, firstName, lastName } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({
+        error: 'Email is required'
+      });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ email: email.toLowerCase() });
+    
+    // If user doesn't exist, create a new one
+    if (!user) {
+      const randomPassword = crypto.randomBytes(16).toString('hex');
+      const hashedPassword = await bcrypt.hash(randomPassword, 12);
+      
+      user = new User({
+        email: email.toLowerCase(),
+        firstName: firstName || 'Google',
+        lastName: lastName || 'User',
+        password: hashedPassword,
+        isActive: true
+      });
+      
+      await user.save();
+    }
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      message: 'Google authentication successful',
+      token,
+      user: user.toSafeObject()
+    });
+  } catch (error) {
+    console.error('Google auth failed', error.message);
+    res.status(500).json({
+      error: 'Failed to authenticate with Google'
     });
   }
 });

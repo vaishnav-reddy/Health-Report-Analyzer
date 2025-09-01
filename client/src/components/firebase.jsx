@@ -12,9 +12,21 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+// Initialize Firebase with error handling
+let app;
+let auth;
+let provider;
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  provider = new GoogleAuthProvider();
+  // Add scopes if needed
+  provider.addScope('profile');
+  provider.addScope('email');
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+  // Provide fallbacks or handle error states
+}
 
 export { auth, provider, signInWithPopup };

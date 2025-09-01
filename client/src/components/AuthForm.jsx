@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link ,useNavigate} from "react-router-dom";
-import { login, register } from "../utils/api";
+import { login, register, googleAuth } from "../utils/api";
 import { toast } from 'react-toastify';
 import "../styles/AuthForm.css";
 import GoogleButton from "react-google-button";
@@ -98,23 +98,39 @@ const handlePasswordChange = (e) => {
   };
 
   const handleGoogleSignIn = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = {
-      firstName: result.user.displayName.split(" ")[0],
-      lastName: result.user.displayName.split(" ")[1] || "",
-      email: result.user.email,
-    };
+    try {
+      setLoading(true);
+      setError("");
+      const result = await signInWithPopup(auth, provider);
+      const user = {
+        firstName: result.user.displayName.split(" ")[0],
+        lastName: result.user.displayName.split(" ")[1] || "",
+        email: result.user.email,
+      };
 
-    // Save token and user locally
-    const token = await result.user.getIdToken();
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    onLogin(user, token);
-  } catch (error) {
-    setError("Google sign-in failed. Please try again.");
-  }
-};
+      // Use our backend API to authenticate with Google
+      const data = await googleAuth(user);
+
+      if (data.success) {
+        // Save token and user locally
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        toast.success(`Welcome, ${data.user.firstName}!`);
+        onLogin(data.user, data.token);
+        navigate("/");
+      } else {
+        setError(data.error || "Google sign-in failed. Please try again.");
+        toast.error("Google sign-in failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setError("Google sign-in failed. Please try again.");
+      toast.error("Google authentication failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   
   const handleSubmit = async (e) => {

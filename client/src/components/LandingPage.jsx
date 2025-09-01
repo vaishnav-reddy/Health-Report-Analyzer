@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Shield, Zap, TrendingUp, Clock } from 'lucide-react';
+import { FileText, Shield, Zap, TrendingUp, Clock, LogOut } from 'lucide-react';
+import { toast } from 'react-toastify';
 import '../styles/landing.css'
 
-export default function LandingPage({ user }) {
+export default function LandingPage({ user, setUser }) {
   const navigate = useNavigate();
 
   const handleSignInClick = () => {
@@ -12,6 +13,13 @@ export default function LandingPage({ user }) {
 
   const handleSignUpClick = () => {
     navigate('/signup');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    toast.success("Successfully logged out. See you again!");
   };
 
   const handleGetStartedClick = () => {
@@ -34,12 +42,26 @@ export default function LandingPage({ user }) {
             <h1 className="landing-logo-text">Health Report Analyzer</h1>
           </div>
           <div className="landing-header-buttons">
-            <button className="landing-signin-button" onClick={handleSignInClick}>
-              Sign In
-            </button>
-            <button className="landing-signup-button" onClick={handleSignUpClick}>
-              Sign Up
-            </button>
+            {user ? (
+              <>
+                <button className="landing-signin-button" onClick={() => navigate('/dashboard')}>
+                  Return to Dashboard
+                </button>
+                <button className="landing-logout-button" onClick={handleLogout}>
+                  <LogOut size={16} className="landing-logout-icon" />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="landing-signin-button" onClick={handleSignInClick}>
+                  Sign In
+                </button>
+                <button className="landing-signup-button" onClick={handleSignUpClick}>
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -57,7 +79,7 @@ export default function LandingPage({ user }) {
           </p>
           <div className="landing-hero-button-container">
             <button className="landing-primary-button" onClick={handleGetStartedClick}>
-              {user ? "Go to Dashboard" : "Get Started Free"}
+              {user ? "Return to Dashboard" : "Get Started Free"}
             </button>
           </div>
         </div>

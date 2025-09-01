@@ -173,17 +173,23 @@ function App() {
     <Router>
       <div className="app">
         <Routes>
-          {/* Landing page - default route for non-authenticated users */}
+          {/* Landing page - accessible to all users */}
           <Route
             path="/"
             element={
-              user ? <Navigate to="/dashboard" /> : (
-                <>
-                  <LandingPage user={user} />
-                  <FAQ />
-                  <Footer />
-                </>
-              )
+              <>
+                <LandingPage user={user} setUser={setUser} />
+                <FAQ />
+                <Footer />
+              </>
+            }
+          />
+
+          {/* Auto-redirect to dashboard if logged in */}
+          <Route
+            path="/home"
+            element={
+              user ? <Navigate to="/dashboard" /> : <Navigate to="/" />
             }
           />
 
@@ -194,8 +200,15 @@ function App() {
               user ? <Navigate to="/dashboard" /> : (
                 <>
                   <header className="app-header">
-                    <h1>🏥 Health Report Analyzer</h1>
-                    <p>Secure platform to analyze your health reports with AI insights</p>
+                    <div className="header-content">
+                      <div className="header-text">
+                        <h1>🏥 Health Report Analyzer</h1>
+                        <p>Secure platform to analyze your health reports with AI insights</p>
+                      </div>
+                      <div className="header-actions">
+                        <Link to="/" className="btn-home">🏠 Back to Home</Link>
+                      </div>
+                    </div>
                   </header>
                   <main className="app-main">
                     <AuthForm onLogin={handleLogin} isLogin={true} />
@@ -211,8 +224,15 @@ function App() {
               user ? <Navigate to="/dashboard" /> : (
                 <>
                   <header className="app-header">
-                    <h1>🏥 Health Report Analyzer</h1>
-                    <p>Secure platform to analyze your health reports with AI insights</p>
+                    <div className="header-content">
+                      <div className="header-text">
+                        <h1>🏥 Health Report Analyzer</h1>
+                        <p>Secure platform to analyze your health reports with AI insights</p>
+                      </div>
+                      <div className="header-actions">
+                        <Link to="/" className="btn-home">🏠 Back to Home</Link>
+                      </div>
+                    </div>
                   </header>
                   <main className="app-main">
                     <AuthForm onLogin={handleLogin} isLogin={false} />
@@ -228,8 +248,15 @@ function App() {
               user ? <Navigate to="/dashboard" /> : (
                 <>
                   <header className="app-header">
-                    <h1>🏥 Health Report Analyzer</h1>
-                    <p>Reset your password</p>
+                    <div className="header-content">
+                      <div className="header-text">
+                        <h1>🏥 Health Report Analyzer</h1>
+                        <p>Reset your password</p>
+                      </div>
+                      <div className="header-actions">
+                        <Link to="/" className="btn-home">🏠 Back to Home</Link>
+                      </div>
+                    </div>
                   </header>
                   <main className="app-main">
                     <ForgotPassword />
@@ -246,8 +273,15 @@ function App() {
               user ? <Navigate to="/dashboard" /> : (
                 <>
                   <header className="app-header">
-                    <h1>🏥 Health Report Analyzer</h1>
-                    <p>Enter your new password</p>
+                    <div className="header-content">
+                      <div className="header-text">
+                        <h1>🏥 Health Report Analyzer</h1>
+                        <p>Enter your new password</p>
+                      </div>
+                      <div className="header-actions">
+                        <Link to="/" className="btn-home">🏠 Back to Home</Link>
+                      </div>
+                    </div>
                   </header>
                   <main className="app-main">
                     <ResetPassword />

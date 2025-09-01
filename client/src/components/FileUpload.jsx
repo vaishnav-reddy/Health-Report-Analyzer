@@ -121,15 +121,28 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
     } catch (error) {
       console.error('File upload error:', error);
       
+      // Clear any OCR simulation timer
+      if (ocrTimerRef.current) {
+        clearInterval(ocrTimerRef.current);
+      }
+      
       // Provide more helpful messages based on common issues
-      if (error.message.includes('No text could be extracted')) {
+      if (error.message?.includes('No text could be extracted')) {
         onError('No readable text found in your file. Please upload a health report with clear text content or try a different file format.');
-      } else if (error.message.includes('No health parameters found')) {
+      } else if (error.message?.includes('No health parameters found')) {
         onError('We couldn\'t identify any health parameters in this document. Please ensure this is a standard health/lab report.');
-      } else if (error.message.includes('timeout of')) {
-        onError('Processing is taking longer than expected. The server might still be analyzing your document. Please try again in a moment or upload a clearer document.');
+      } else if (error.message?.includes('timeout') || error.code === 'ECONNABORTED') {
+        onError('The server is taking too long to respond. This might be due to high server load or a complex document. Please try again in a few minutes or with a simpler document.');
+      } else if (error.message?.includes('Network Error') || !navigator.onLine) {
+        onError('Network connection lost. Please check your internet connection and try again.');
+      } else if (error.response?.status === 413) {
+        onError('The file is too large for the server to process. Please try a smaller file (under 10MB).');
+      } else if (error.response?.status === 415) {
+        onError('This file format is not supported. Please upload a PDF or image file (JPEG, JPG, PNG).');
+      } else if (error.response?.status >= 500) {
+        onError('The server encountered an error. Our team has been notified. Please try again later.');
       } else {
-        onError(error.message || 'Failed to process file');
+        onError(error.message || 'Failed to process file. Please try again or contact support if the problem persists.');
       }
     } finally {
       onLoadingChange(false);

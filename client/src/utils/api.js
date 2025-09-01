@@ -1,32 +1,55 @@
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
-// console.log('API Base URL:', API_BASE_URL, 'Environment:', import.meta.env.MODE, 'VITE_API_URL:', import.meta.env.VITE_API_URL);
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 600000, // 300 seconds (5 minutes) for file uploads with OCR
+  timeout: 600000, // 600 seconds (10 minutes) for file uploads with OCR
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
 // Add token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 // Handle auth errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle authentication errors
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.reload();
     }
+    
+    // Log all errors for debugging
+    console.error('API error:', error?.response?.data || error.message);
+    
+    // Network errors
+    if (error.message === 'Network Error' && !navigator.onLine) {
+      console.error('No internet connection');
+    }
+    
+    // Timeout errors
+    if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
+      console.error('Request timeout');
+    }
+    
     return Promise.reject(error);
   }
 );
@@ -39,6 +62,17 @@ export const login = async (email, password) => {
   } catch (error) {
     throw new Error(
       error.response?.data?.error || 'Login failed'
+    );
+  }
+};
+
+export const googleAuth = async (userData) => {
+  try {
+    const response = await api.post('/auth/google-auth', userData);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || 'Google authentication failed'
     );
   }
 };
