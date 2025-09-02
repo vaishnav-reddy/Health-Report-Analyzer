@@ -1,6 +1,6 @@
 # 🩺 Health Report Analyzer
 
-You can take a look at this project at - [Website](health-report-analyzer.vercel.app)
+You can take a look at this project at - [Website](https://health-report-analyzer.vercel.app/)
 
 > **Upload your lab reports (PDF/image) and get your health data automatically extracted into organized tables with trend analysis. No more manual data entry!**
 
@@ -35,11 +35,6 @@ You can take a look at this project at - [Website](health-report-analyzer.vercel
         </tr>
     </tbody>
 </table>
-
-</div>
-<img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%">
-
-<h1 align="center">Supported By <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Folded%20Hands%20Light%20Skin%20Tone.png" alt="Folded Hands Light Skin Tone" width="25" height="25" /></h1>
 
 </div>
 <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%">
@@ -103,6 +98,54 @@ npm run dev
 </div>
 
 Open http://localhost:3000 and start uploading your reports!
+
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/74038190/212284115-f47cd8ff-2ffb-4b04-b5bf-4d1c14c0247f.gif" width="1000">
+</div>
+
+## Environment Setup
+When you fork this repository, you'll need to set up the following environment variables:
+
+### Client (.env file in /client directory)
+```properties
+# Development API URL - use localhost during development
+VITE_API_URL=http://localhost:5001/api
+
+# Firebase configuration - create your Firebase project at https://console.firebase.google.com/
+VITE_FIREBASE_API_KEY="your-api-key"
+VITE_FIREBASE_AUTH_DOMAIN="your-project-id.firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID="your-project-id"
+VITE_FIREBASE_STORAGE_BUCKET="your-project-id.appspot.com"
+VITE_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
+VITE_FIREBASE_APP_ID="your-app-id"
+VITE_FIREBASE_MEASUREMENT_ID="your-measurement-id"
+```
+
+### Server (.env file in /server directory)
+```properties
+PORT=5001
+NODE_ENV=development
+# Generate a strong random string for JWT_SECRET (use a secure generator)
+JWT_SECRET=your-secure-random-string
+SESSION_EXPIRE=7d
+# Create a MongoDB Atlas cluster or use local MongoDB
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/health-report?retryWrites=true&w=majority
+# Set to your frontend URL, use localhost during development
+FRONTEND_URL=http://localhost:3000
+
+# For password reset functionality (optional)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+# Create an app password if using Gmail: https://myaccount.google.com/apppasswords
+EMAIL_PASS=your-app-password
+```
+
+### How to get these credentials:
+1. **Firebase**: [Create a Firebase project](https://console.firebase.google.com/) and get your web app credentials
+2. **MongoDB**: [Set up a MongoDB Atlas cluster](https://www.mongodb.com/cloud/atlas/register) or use a local MongoDB instance
+3. **JWT Secret**: Generate a secure random string using a tool like [RandomKeygen](https://randomkeygen.com/)
+4. **Email (for password reset)**: Use your Gmail account and [create an app password](https://myaccount.google.com/apppasswords)
 
 <div align="center">
   <img src="https://user-images.githubusercontent.com/74038190/212284115-f47cd8ff-2ffb-4b04-b5bf-4d1c14c0247f.gif" width="1000">
@@ -175,8 +218,8 @@ For questions, suggestions, or collaboration, reach out via [LinkedIn](https://w
 **👥 Project Admin & 👨‍🏫 Mentors – Health-Report-Analyzer (GSSoC'25)**
 | Role          | Name               | GitHub Profile                                      | LinkedIn Profile                                                        |
 | ------------- | ------------------ | --------------------------------------------------- | ----------------------------------------------------------------------- |
-| Project Admin | YASH VERMA   | [Rajput-xv](https://github.com/Rajput-xv/)    | [yash-rajput-xv](https://www.linkedin.com/in/yash-rajput-xv/)       |
-| Mentor 1   | Gauri Madan |           | [anupriya-yadav](https://www.linkedin.com/in/gauri-madaan-b832a6252)           |
+| Project Admin | YASH VERMA   | [Rajput-xv](https://github.com/Rajput-xv/)    | [yash-rajput](https://www.linkedin.com/in/yash-rajput-xv/)       |
+| Mentor 1   | Gauri Madan |           | [gauri madaan](https://www.linkedin.com/in/gauri-madaan-b832a6252)           |
 
 <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%">
 
