@@ -13,6 +13,7 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import LandingPage from './components/LandingPage';
 import Footer from './components/Footer';
+import ContactUs from './components/ContactUs';
 import { getCurrentUser } from './utils/api';
 import './styles/App.css';
 import FAQ from "./components/FAQ";
@@ -69,6 +70,7 @@ function Dashboard({ user, setUser }) {
           </div>
           <div className="header-actions">
             <Link to="/" className="btn-home">🏠 Go to Home</Link>
+            <Link to="/contact" className="btn-contact">📧 Contact Us</Link>
             <UserProfile user={user} onLogout={handleLogout} />
           </div>
         </div>
@@ -289,6 +291,32 @@ function App() {
                   <Footer />
                 </>
               )
+            }
+          />
+
+          {/* Contact Us route */}
+          <Route
+            path="/contact"
+            element={
+              user ? (
+                <>
+                  <header className="app-header">
+                    <div className="header-content">
+                      <div className="header-text">
+                        <h1>🏥 Health Report Analyzer</h1>
+                        <p>We'd love to hear from you!</p>
+                      </div>
+                      <div className="header-actions">
+                        <Link to="/dashboard" className="btn-home">🏠 Back to Dashboard</Link>
+                      </div>
+                    </div>
+                  </header>
+                  <main className="app-main">
+                    <ContactUs user={user} />
+                  </main>
+                  <Footer />
+                </>
+              ) : <Navigate to="/login" />
             }
           />
 
