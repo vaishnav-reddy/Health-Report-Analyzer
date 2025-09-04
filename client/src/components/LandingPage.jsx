@@ -47,6 +47,9 @@ export default function LandingPage({ user, setUser }) {
                 <button className="landing-signin-button" onClick={() => navigate('/dashboard')}>
                   Return to Dashboard
                 </button>
+                <button className="landing-contact-button" onClick={() => navigate('/contact')}>
+              Contact Us
+            </button>
                 <button className="landing-logout-button" onClick={handleLogout}>
                   <LogOut size={16} className="landing-logout-icon" />
                   Logout
@@ -57,6 +60,9 @@ export default function LandingPage({ user, setUser }) {
                 <button className="landing-signin-button" onClick={handleSignInClick}>
                   Sign In
                 </button>
+                <button className="landing-contact-button" onClick={() => navigate('/contact')}>
+              Contact Us
+            </button>
                 <button className="landing-signup-button" onClick={handleSignUpClick}>
                   Sign Up
                 </button>

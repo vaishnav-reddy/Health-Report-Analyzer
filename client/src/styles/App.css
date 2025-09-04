@@ -898,26 +898,27 @@
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
   text-decoration: none;
   border-radius: 0.5rem;
   font-weight: 500;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
 }
 
 .btn-home:hover, .btn-contact:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(45deg, #5a6fd8, #6a42a0);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
 }
 
 .btn-contact {
-  background-color: #27ae60;
+  background: linear-gradient(45deg, #667eea, #764ba2);
 }
 
 .btn-contact:hover {
-  background-color: #219653;
+  background: linear-gradient(45deg, #5a6fd8, #6a42a0);
 }
 
 .auth-loading {

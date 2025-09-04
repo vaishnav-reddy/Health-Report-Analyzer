@@ -80,15 +80,38 @@ button:hover {
 }
 
 .btn-retry {
-  background: #f56565;
+  background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.btn-retry:hover {
+  background: linear-gradient(45deg, #5a6fd8, #6a42a0);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
 }
 
 .btn-new-upload {
-  background: #48bb78;
+  background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.btn-new-upload:hover {
+  background: linear-gradient(45deg, #5a6fd8, #6a42a0);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
 }
 
 /* Cards and Containers */
