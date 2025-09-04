@@ -31,7 +31,7 @@ const ContactUs = ({ user }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          access_key: '1062bbfa-af4d-48d3-985b-56511cfb073d',
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
           name: formData.name,
           email: formData.email,
           subject: formData.subject,
