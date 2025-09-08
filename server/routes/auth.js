@@ -107,8 +107,13 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Check password
+    // Special handling for Google-authenticated users who have reset their password
+    console.log(`Login attempt for ${email}: Google Auth = ${user.googleAuth}, Password Changed = ${user.passwordChanged}`);
+
+    // Check password - log comparison details for debugging
     const isValidPassword = await bcrypt.compare(password, user.password);
+    console.log(`Login attempt for ${email}: Password validation result = ${isValidPassword}`);
+    
     if (!isValidPassword) {
       return res.status(400).json({
         error: 'Invalid email or password'
@@ -126,7 +131,7 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Login attempt failed');
+    console.error('Login attempt failed', error);
     res.status(500).json({
       error: 'Failed to login'
     });
@@ -209,17 +214,24 @@ router.post("/reset-password/:token", async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Use the same salt rounds as in registration (12)
-    const saltRounds = 12;
-    user.password = await bcrypt.hash(password, saltRounds);
+    // Disable the pre-save hook for password hashing
+    // because we're going to hash it manually here
+    user.password = password;
     user.resetPasswordToken = null;
     user.resetPasswordExpire = null;
+    
+    // Mark that this user has manually changed their password
+    // This is important for Google-authenticated users
+    user.passwordChanged = true;
 
     await user.save();
 
+    console.log(`Password reset successful for user: ${user.email}`);
+
     res.json({ message: "Password updated successfully" });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Password reset error:", err);
+    res.status(500).json({ message: "Server error", details: err.message });
   }
 });
 
@@ -281,9 +293,23 @@ router.post('/google-auth', async (req, res) => {
         firstName: firstName || 'Google',
         lastName: lastName || 'User',
         password: hashedPassword,
-        isActive: true
+        isActive: true,
+        googleAuth: true
       });
       
+      await user.save();
+    } else {
+      // Update user's name if it changed in Google
+      if (firstName && firstName !== user.firstName) {
+        user.firstName = firstName;
+      }
+      if (lastName && lastName !== user.lastName) {
+        user.lastName = lastName;
+      }
+      // Mark as Google authenticated if not already set
+      if (!user.googleAuth) {
+        user.googleAuth = true;
+      }
       await user.save();
     }
 
