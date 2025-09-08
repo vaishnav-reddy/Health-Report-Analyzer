@@ -133,9 +133,7 @@ MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/health-report?re
 # Set to your frontend URL, use localhost during development
 FRONTEND_URL=http://localhost:3000
 
-# For password reset functionality (optional)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
+# For password reset functionality
 EMAIL_USER=your-email@gmail.com
 # Create an app password if using Gmail: https://myaccount.google.com/apppasswords
 EMAIL_PASS=your-app-password
