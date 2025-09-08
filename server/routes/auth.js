@@ -156,18 +156,25 @@ router.post("/forgot-password", async (req, res) => {
 
 
     // Send email
-    // These email config variables should be set in your .env file (not committed):
-    // EMAIL_HOST=smtp.gmail.com
-    // EMAIL_PORT=587
-    // EMAIL_USER=your-email@gmail.com
-    // EMAIL_PASS=your-google-app-password (use Google App Passwords)
+    // These email config variables should be set in your .env file:
+    // For Gmail, you MUST use an App Password:
+    // 1. Enable 2-Step Verification on your Google account
+    // 2. Go to https://myaccount.google.com/apppasswords to create an App Password
+    // 3. Use that 16-character password in your EMAIL_PASS environment variable
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT),
-      secure: false,
+      service: 'Gmail',
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        pass: process.env.EMAIL_PASS // This MUST be an App Password for Gmail
+      }
+    });
+
+    // Verify the connection configuration
+    transporter.verify(function(error, success) {
+      if (error) {
+        console.error("SMTP Verification Error:", error);
+      } else {
+        console.log("SMTP server is ready to take our messages");
       }
     });
 
