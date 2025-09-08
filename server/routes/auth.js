@@ -53,16 +53,12 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Hash password
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
     // Create new user
     const newUser = new User({
       email: email.toLowerCase(),
       firstName: firstName.trim(),
       lastName: lastName.trim(),
-      password: hashedPassword
+      password: password
     });
 
     await newUser.save();
