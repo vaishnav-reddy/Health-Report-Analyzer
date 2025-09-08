@@ -162,7 +162,9 @@ router.post("/forgot-password", async (req, res) => {
     // EMAIL_USER=your-email@gmail.com
     // EMAIL_PASS=your-google-app-password (use Google App Passwords)
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: process.env.EMAIL_HOST,
+      port: parseInt(process.env.EMAIL_PORT),
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -178,7 +180,8 @@ router.post("/forgot-password", async (req, res) => {
 
     res.json({ message: "If the email exists, a reset link has been sent" });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Password reset email error:", err);
+    res.status(500).json({ message: "Server error", details: err.message });
   }
 });
 

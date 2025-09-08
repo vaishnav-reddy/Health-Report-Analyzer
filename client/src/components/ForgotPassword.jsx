@@ -18,7 +18,8 @@ const ForgotPassword = () => {
         "If an account with that email exists, a reset link has been sent."
       );
     } catch (error) {
-      setMessage(error.message);
+      console.error("Forgot password error:", error);
+      setMessage(error.message || "An error occurred while sending the reset link");
     } finally {
       setLoading(false);
     }

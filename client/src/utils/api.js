@@ -182,8 +182,12 @@ export const forgotPassword = async (email) => {
     const response = await api.post('/auth/forgot-password', { email });
     return response.data;
   } catch (error) {
+    console.error('Forgot password error:', error.response?.data);
     throw new Error(
-      error.response?.data?.error || 'Failed to send reset link'
+      error.response?.data?.message || 
+      error.response?.data?.details || 
+      error.response?.data?.error || 
+      'Failed to send reset link'
     );
   }
 };
