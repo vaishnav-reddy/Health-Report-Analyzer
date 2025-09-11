@@ -50,7 +50,7 @@ export default function LandingPage({ user, setUser }) {
               </>
             ) : (
               <>
-                <button className="landing-signin-button" onClick={handleSignInClick}> Logout </button>
+                <button className="landing-signin-button" onClick={handleSignInClick}> Sign In </button>
                 <button className="landing-contact-button" onClick={() => navigate('/contact')}>Contact Us</button>
                 <button className="landing-signup-button" onClick={handleSignUpClick}>Sign Up</button>
               </>
