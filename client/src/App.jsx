@@ -19,6 +19,7 @@ import { getCurrentUser } from './utils/api';
 import './styles/App.css';
 import FAQ from "./components/FAQ";
 import { Link } from "react-router-dom";
+import { FileText } from 'lucide-react';
 
 
 // Dashboard Component - Main authenticated app
@@ -63,24 +64,34 @@ function Dashboard({ user, setUser }) {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="header-content">
-          <div className="header-text">
-            <h1>🏥 Health Report Analyzer</h1>
-            <p>Welcome back, {user.firstName}! Upload your lab report and get instant insights.</p>
+      <header className="landing-header">
+        <div className="landing-header-content">
+          <div className="landing-logo">
+            <FileText className="landing-logo-icon" />
+            {/* <img src="/Health%20Report%20Analyzer%20Logo.png" alt="Logo" className="logo-img" /> */}
+            <h1 className="landing-logo-text">Health Report Analyzer</h1>
           </div>
-          <div className="header-actions">
-            <Link to="/" className="btn-home">Go to Home</Link>
+          <div className="nav-button user-section">
+            <Link to="/" className="btn-home">Home</Link>
             <Link to="/contact" className="btn-contact">Contact Us</Link>
-            <UserProfile user={user} onLogout={handleLogout} />
+          {/* </div> */}
+          {/* <div className="user-section"> */}
+            <UserProfile className="user-section" user={user} onLogout={handleLogout} />
           </div>
         </div>
       </header>
 
       <main className="app-main">
+        {!reportData && !loading && !error && (
+          <div className="welcome-dashboard-message">
+            <h2>Welcome back, {user.firstName}!</h2>
+            <p>Upload your lab report and get instant insights.</p>
+          </div>
+        )}
+        
         {error && (
           <div className="error-banner">
-            <span>❌ {error}</span>
+            <span>{error}</span>
             <button onClick={handleReset} className="btn-retry">Try Again</button>
           </div>
         )}
@@ -209,7 +220,7 @@ function App() {
                         <p>Secure platform to analyze your health reports with AI insights</p>
                       </div>
                       <div className="header-actions">
-                        <Link to="/" className="btn-home">🏠 Back to Home</Link>
+                        <Link to="/" className="btn-home">Back to Home</Link>
                       </div>
                     </div>
                   </header>
@@ -226,17 +237,17 @@ function App() {
             element={
               user ? <Navigate to="/dashboard" /> : (
                 <>
-              <header className="landing-header">
-  <div className="header-content">
-   <div className="header-text">
-  <h1>🏥 Health Report Analyzer</h1>
-  <p>Secure platform to analyze your health reports with AI insights</p>
-</div>
-    <div className="header-actions">
-      <Link to="/" className="landing-contact-button">🏠 Back to Home</Link>
-    </div>
-  </div>
-</header>
+                  <header className="app-header">
+                    <div className="header-content">
+                      <div className="header-text">
+                        <h1>🏥 Health Report Analyzer</h1>
+                        <p>Secure platform to analyze your health reports with AI insights</p>
+                      </div>
+                      <div className="header-actions">
+                        <Link to="/" className="btn-home">Back to Home</Link>
+                      </div>
+                    </div>
+                  </header>
                   <main className="app-main">
                     <AuthForm onLogin={handleLogin} isLogin={false} />
                   </main>
@@ -257,7 +268,7 @@ function App() {
                         <p>Reset your password</p>
                       </div>
                       <div className="header-actions">
-                        <Link to="/" className="btn-home">🏠 Back to Home</Link>
+                        <Link to="/" className="btn-home">Back to Home</Link>
                       </div>
                     </div>
                   </header>
@@ -282,7 +293,7 @@ function App() {
                         <p>Enter your new password</p>
                       </div>
                       <div className="header-actions">
-                        <Link to="/" className="btn-home">🏠 Back to Home</Link>
+                        <Link to="/" className="btn-home">Back to Home</Link>
                       </div>
                     </div>
                   </header>
@@ -308,7 +319,7 @@ function App() {
                         <p>We'd love to hear from you!</p>
                       </div>
                       <div className="header-actions">
-                        <Link to="/dashboard" className="btn-home">🏠 Back to Dashboard</Link>
+                        <Link to="/dashboard" className="btn-home">Back to Dashboard</Link>
                       </div>
                     </div>
                   </header>
