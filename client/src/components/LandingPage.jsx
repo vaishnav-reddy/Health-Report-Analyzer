@@ -1,4 +1,5 @@
-import React from 'react';
+// import React from 'react';
+import React, { useState } from 'react';  // ⬅ add useState
 import { useNavigate } from 'react-router-dom';
 import { FileText, Shield, Zap, TrendingUp, Clock, LogOut } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -7,6 +8,7 @@ import DarkModeToggle from './DarkModeToggle';
 
 export default function LandingPage({ user, setUser }) {
   const navigate = useNavigate();
+  const [showDialog, setShowDialog] = useState(false);
 
   const handleSignInClick = () => {
     navigate('/login');
@@ -20,7 +22,9 @@ export default function LandingPage({ user, setUser }) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setShowDialog(false);
     toast.success("Successfully logged out. See you again!");
+    navigate('/'); //redirect to homepage after logout
   };
 
   const handleGetStartedClick = () => {
@@ -49,7 +53,7 @@ export default function LandingPage({ user, setUser }) {
                 <button className="landing-signin-button" onClick={() => navigate('/dashboard')}>Return to Dashboard</button>
                 <button className="landing-contact-button" onClick={() => navigate('/contact')}>Contact Us</button>
                 <div className="dashboard-profile">
-                  <button onClick={handleLogout} className="btn-logout">
+                  <button onClick={() => setShowDialog(true)} className="btn-logout">
                     <LogOut size={16} /> Logout
                   </button>
                 </div>
@@ -65,6 +69,32 @@ export default function LandingPage({ user, setUser }) {
           <DarkModeToggle />
         </div>
       </header>
+
+       {/* ---------- Floating overlay confirmation (top-right) ---------- */}
+      {showDialog && (
+        <div className="overlay-popup" role="dialog" aria-modal="true">
+          <div className="overlay-card">
+            <div className="overlay-header">
+              <LogOut size={18} className="overlay-icon" />
+              <div className="overlay-title">Confirm Logout</div>
+            </div>
+            <div className="overlay-body">
+              <div className="overlay-text">
+                Are you sure you want to log out?
+                <div className="overlay-subtext">You’ll need to sign in again to continue.</div>
+              </div>
+              <div className="overlay-actions">
+                <button className="btn-confirm" onClick={handleLogout}>
+                  Yes, Logout
+                </button>
+                <button className="btn-cancel" onClick={() => setShowDialog(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="landing-hero-section">
