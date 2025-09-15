@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FileText, Shield, Zap, TrendingUp, Clock, LogOut } from 'lucide-react';
 import { toast } from 'react-toastify';
 import '../styles/landing.css'
+import DarkModeToggle from './DarkModeToggle';
 
 export default function LandingPage({ user, setUser }) {
   const navigate = useNavigate();
@@ -61,6 +62,7 @@ export default function LandingPage({ user, setUser }) {
               </>
             )}
           </div>
+          <DarkModeToggle />
         </div>
       </header>
 
