@@ -1447,3 +1447,23 @@
 /* Progress bars */
 .dark-mode .progress-bar { background: #111827; }
 .dark-mode .progress-fill { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+
+/* App header width + alignment */
+.app-header {
+  width: 100%;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.header-actions { margin-left: auto; }
+
+/* Dark mode app-header visuals */
+.dark-mode .app-header {
+  background: rgba(17, 24, 39, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}

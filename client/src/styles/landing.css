@@ -7,14 +7,17 @@ Landing Page Styles
   color: #333;
 }
 
-/* Header Styles */
+/* Navbar global alignment and width */
 .landing-header {
+  width: 100%;
+  left: 0;
+  right: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 1rem 0;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -23,7 +26,6 @@ Landing Page Styles
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
@@ -46,10 +48,9 @@ Landing Page Styles
   margin: 0;
 }
 
-.landing-header-buttons {
-  display: flex;
-  gap: 1.2rem;
-}
+/* Push header buttons/nav to the right */
+.landing-header-buttons { margin-left: auto; display: flex; gap: 1.2rem; }
+.landing-header-content .nav-button { margin-left: auto; }
 
 @media (max-width: 768px) {
   .landing-header-buttons {
@@ -690,7 +691,6 @@ Landing Page Styles
   }
 }
 
-<<<<<<< HEAD
 /* ----- Dark Mode: Landing page ----- */
 .dark-mode .landing-container {
   background: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);
@@ -698,8 +698,10 @@ Landing Page Styles
 }
 
 .dark-mode .landing-header {
-  background: rgba(17, 24, 39, 0.6);
+  background: rgba(17, 24, 39, 0.55);
   border-bottom-color: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .dark-mode .landing-logo-text { color: #f9fafb; }
@@ -741,8 +743,6 @@ Landing Page Styles
 
 .dark-mode .landing-footer { background: rgba(2, 6, 23, 0.7); border-top-color: rgba(255,255,255,0.06); }
 .dark-mode .landing-footer-copyright { color: #9ca3af; }
-=======
-
 /* Overlay popup — improved version */
 .overlay-popup {
   position: fixed;
@@ -838,4 +838,4 @@ Landing Page Styles
 .btn-cancel:hover {
   background: #e5e7eb;
 }
->>>>>>> upstream/main
+
