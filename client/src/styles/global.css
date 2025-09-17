@@ -279,3 +279,34 @@ button:hover {
 .hidden {
   display: none;
 }
+
+/* Dark mode basic inversion (for toggle effect only, not a full theme) */
+.dark-mode {
+  filter: none;
+  color-scheme: dark;
+  background: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);
+}
+
+.dark-mode body,
+.dark-mode #root {
+  background: transparent;
+}
+
+.dark-mode h1 { color: #e5e7eb; }
+.dark-mode h2 { color: #f3f4f6; }
+.dark-mode h3 { color: #d1d5db; }
+.dark-mode p  { color: #cbd5e1; }
+
+/* Buttons keep brand look; no change needed */
+
+/* Toastify tweaks for dark */
+.dark-mode .Toastify__toast-theme--light,
+.dark-mode .Toastify__toast-theme--colored,
+.dark-mode .Toastify__toast {
+  background: #111827;
+  color: #e5e7eb;
+}
+.dark-mode .Toastify__progress-bar--light,
+.dark-mode .Toastify__progress-bar--default {
+  background: #6366f1;
+}

@@ -20,6 +20,7 @@ import './styles/App.css';
 import FAQ from "./components/FAQ";
 import { Link } from "react-router-dom";
 import { FileText } from 'lucide-react';
+import DarkModeToggle from './components/DarkModeToggle';
 
 
 // Dashboard Component - Main authenticated app
@@ -74,9 +75,8 @@ function Dashboard({ user, setUser }) {
           <div className="nav-button user-section">
             <Link to="/" className="btn-home">Home</Link>
             <Link to="/contact" className="btn-contact">Contact Us</Link>
-          {/* </div> */}
-          {/* <div className="user-section"> */}
             <UserProfile className="user-section" user={user} onLogout={handleLogout} />
+            <DarkModeToggle />
           </div>
         </div>
       </header>
