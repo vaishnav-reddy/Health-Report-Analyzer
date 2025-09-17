@@ -1354,11 +1354,6 @@
 }
 
 /* ----- Dark Mode: Dashboard surfaces ----- */
-.dark-mode .landing-header-content {
-  background-color: rgba(31, 41, 55, 0.9);
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
-}
-
 .dark-mode .welcome-dashboard-message h2 { color: #e5e7eb; }
 .dark-mode .welcome-dashboard-message p  { color: #cbd5e1; }
 

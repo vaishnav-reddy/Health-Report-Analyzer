@@ -123,6 +123,7 @@ Landing Page Styles
   box-shadow: 0 3px 8px rgba(0,0,0,0.25); 
 }
 
+
 /* Landing page dashboard-profile styles */
 .landing-header-buttons .dashboard-profile {
   display: flex;
@@ -696,6 +697,7 @@ Landing Page Styles
   background: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);
   color: #e5e7eb;
 }
+
 
 .dark-mode .landing-header {
   background: rgba(17, 24, 39, 0.55);
