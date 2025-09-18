@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { uploadFile } from '../utils/api';
+import React, { useState, useRef, useEffect } from "react";
+import { uploadFile } from "../utils/api";
+import { useLoading } from "../context/LoadingContext";
 
-const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
+const FileUpload = ({ onFileProcessed, onError }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [processingOcr, setProcessingOcr] = useState(false);
@@ -9,7 +10,9 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
   const ocrTimerRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Clean up the timer when component unmounts
+  const { setLoading } = useLoading();
+
+  // Clean up OCR timer
   useEffect(() => {
     return () => {
       if (ocrTimerRef.current) {
@@ -45,46 +48,50 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
   };
 
   const handleFileUpload = async (file) => {
-    // Validate file type
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    const allowedTypes = [
+      "application/pdf",
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+    ];
     if (!allowedTypes.includes(file.type)) {
-      onError('Please upload a PDF or image file (JPEG, JPG, PNG)');
+      onError("Please upload a PDF or image file (JPEG, JPG, PNG)");
       return;
     }
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
-      onError('File size must be less than 10MB');
+      onError("File size must be less than 10MB");
       return;
     }
 
     try {
-      onLoadingChange(true);
+      setLoading(true);
       setUploadProgress(0);
-      
-      // Start showing OCR processing simulation if it's a PDF (likely to need OCR)
-      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+
+      if (
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf")
+      ) {
         setProcessingOcr(true);
         setOcrProgress(0);
-        
-        // Simulate OCR progress for visual feedback
+
         if (ocrTimerRef.current) {
           clearInterval(ocrTimerRef.current);
         }
-        
+
         ocrTimerRef.current = setInterval(() => {
-          setOcrProgress(prev => {
-            // Slowly increment up to 95% (we'll hit 100% when done)
-            if (prev >= 95) {
-              return 95;
-            }
-            // Slower progression for longer timeouts (5 min)
-            // Start faster and gradually slow down
-            const increment = 
-              prev < 20 ? 0.8 : 
-              prev < 40 ? 0.5 : 
-              prev < 60 ? 0.3 : 
-              prev < 80 ? 0.2 : 0.1;
+          setOcrProgress((prev) => {
+            if (prev >= 95) return 95;
+            const increment =
+              prev < 20
+                ? 0.8
+                : prev < 40
+                ? 0.5
+                : prev < 60
+                ? 0.3
+                : prev < 80
+                ? 0.2
+                : 0.1;
             return prev + increment;
           });
         }, 1000);
@@ -95,63 +102,64 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
           setUploadProgress(progress);
         }
       });
-      
-      // Clear any OCR simulation
+
       if (ocrTimerRef.current) {
         clearInterval(ocrTimerRef.current);
-        setOcrProgress(100); // Show 100% when done
+        setOcrProgress(100);
       }
 
-      // Check if it's a scanned document that might need special handling
       if (result.isScannedDocument) {
+        onFileProcessed(result);
         if (result.requiresManualEntry) {
-          // Still process the file but warn the user
-          onFileProcessed(result);
-          // Also show a warning message
-          onError('This appears to be a scanned document. No health parameters were automatically detected. You may need to enter the data manually.');
+          onError(
+            "This looks like a scanned document. No health parameters detected — you may need to enter data manually."
+          );
         } else {
-          onFileProcessed(result);
-          // Also show a warning that data might be incomplete
-          onError('This appears to be a scanned document. Some health parameters were detected, but you may need to verify and complete the data.');
+          onError(
+            "This looks like a scanned document. Some health parameters detected, but verify for completeness."
+          );
         }
       } else {
-        // Normal processing for digital documents
         onFileProcessed(result);
       }
     } catch (error) {
-      console.error('File upload error:', error);
-      
-      // Clear any OCR simulation timer
-      if (ocrTimerRef.current) {
-        clearInterval(ocrTimerRef.current);
-      }
-      
-      // Provide more helpful messages based on common issues
-      if (error.message?.includes('No text could be extracted')) {
-        onError('No readable text found in your file. Please upload a health report with clear text content or try a different file format.');
-      } else if (error.message?.includes('No health parameters found')) {
-        onError('We couldn\'t identify any health parameters in this document. Please ensure this is a standard health/lab report.');
-      } else if (error.message?.includes('timeout') || error.code === 'ECONNABORTED') {
-        onError('The server is taking too long to respond. This might be due to high server load or a complex document. Please try again in a few minutes or with a simpler document.');
-      } else if (error.message?.includes('Network Error') || !navigator.onLine) {
-        onError('Network connection lost. Please check your internet connection and try again.');
+      console.error("File upload error:", error);
+
+      if (ocrTimerRef.current) clearInterval(ocrTimerRef.current);
+
+      if (error.message?.includes("No text could be extracted")) {
+        onError("No readable text found. Please upload a clearer report.");
+      } else if (error.message?.includes("No health parameters found")) {
+        onError(
+          "Could not detect health parameters. Please upload a standard health report."
+        );
+      } else if (
+        error.message?.includes("timeout") ||
+        error.code === "ECONNABORTED"
+      ) {
+        onError(
+          "The server is taking too long. Try again later or with a simpler file."
+        );
+      } else if (
+        error.message?.includes("Network Error") ||
+        !navigator.onLine
+      ) {
+        onError("Network issue detected. Please check your connection.");
       } else if (error.response?.status === 413) {
-        onError('The file is too large for the server to process. Please try a smaller file (under 10MB).');
+        onError("File too large. Please upload under 10MB.");
       } else if (error.response?.status === 415) {
-        onError('This file format is not supported. Please upload a PDF or image file (JPEG, JPG, PNG).');
+        onError("Unsupported format. Please upload PDF, JPEG, JPG, or PNG.");
       } else if (error.response?.status >= 500) {
-        onError('The server encountered an error. Our team has been notified. Please try again later.');
+        onError("Server error. Please try again later.");
       } else {
-        onError(error.message || 'Failed to process file. Please try again or contact support if the problem persists.');
+        onError(error.message || "Upload failed. Please try again.");
       }
     } finally {
-      onLoadingChange(false);
+      setLoading(false);
       setUploadProgress(0);
       setProcessingOcr(false);
       setOcrProgress(0);
-      if (ocrTimerRef.current) {
-        clearInterval(ocrTimerRef.current);
-      }
+      if (ocrTimerRef.current) clearInterval(ocrTimerRef.current);
     }
   };
 
@@ -161,8 +169,8 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
 
   return (
     <div className="file-upload-container">
-      <div 
-        className={`file-upload-area ${isDragOver ? 'drag-over' : ''}`}
+      <div
+        className={`file-upload-area ${isDragOver ? "drag-over" : ""}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -172,29 +180,35 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
         <h3>Upload Your Health Report</h3>
         <p>Drag and drop your PDF or image file here, or click to browse</p>
         <p className="file-types">Supported: PDF, JPEG, JPG, PNG (max 10MB)</p>
-        
+
         {uploadProgress > 0 && !processingOcr && (
           <div className="upload-progress">
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
+              <div
+                className="progress-fill"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
             </div>
             <span>{uploadProgress}% uploaded</span>
           </div>
         )}
-        
+
         {processingOcr && (
           <div className="upload-progress">
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
+              <div
+                className="progress-fill"
                 style={{ width: `${ocrProgress}%` }}
               ></div>
             </div>
-            <span>{ocrProgress < 100 ? 'Analyzing document with OCR...' : 'Analysis complete!'}</span>
-            <p className="ocr-note">OCR processing can take up to 5 minutes for complex documents</p>
+            <span>
+              {ocrProgress < 100
+                ? "Analyzing document with OCR..."
+                : "Analysis complete!"}
+            </span>
+            <p className="ocr-note">
+              OCR processing can take up to 5 minutes for complex documents
+            </p>
           </div>
         )}
       </div>
@@ -204,7 +218,7 @@ const FileUpload = ({ onFileProcessed, onError, onLoadingChange }) => {
         type="file"
         accept=".pdf,.jpg,.jpeg,.png"
         onChange={handleFileSelect}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
 
       <div className="upload-tips">
