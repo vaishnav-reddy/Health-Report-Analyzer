@@ -24,7 +24,7 @@ import { getCurrentUser } from "./utils/api";
 import "./styles/App.css";
 import FAQ from "./components/FAQ";
 import { Link } from "react-router-dom";
-import { FileText } from "lucide-react";
+import { FileText, Menu, X, LogOut } from 'lucide-react';
 import DarkModeToggle from "./components/DarkModeToggle";
 import { useLoading } from "./context/LoadingContext.jsx";
 
@@ -33,6 +33,7 @@ function Dashboard({ user, setUser }) {
   const [reportData, setReportData] = useState(null);
   const [trendData, setTrendData] = useState(null);
   const [error, setError] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { loading } = useLoading(); // use global loading state
 
@@ -44,6 +45,7 @@ function Dashboard({ user, setUser }) {
     setTrendData(null);
     setError(null);
     toast.success("Successfully logged out. See you again!");
+    setMenuOpen(false);
   };
 
   const handleFileProcessed = (data) => {
@@ -82,12 +84,15 @@ function Dashboard({ user, setUser }) {
           <div className="landing-logo">
             <FileText className="landing-logo-icon" />
             <h1 className="landing-logo-text">Health Report Analyzer</h1>
+            <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)}>
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
           <div className="nav-button user-section">
-            <Link to="/" className="btn-home">
+            <Link to="/" className="btn-pill">
               Home
             </Link>
-            <Link to="/contact" className="btn-contact">
+            <Link to="/contact" className="btn-pill">
               Contact Us
             </Link>
             <UserProfile
@@ -98,6 +103,18 @@ function Dashboard({ user, setUser }) {
             <DarkModeToggle />
           </div>
         </div>
+
+            {/* Mobile Menu Dropdown  */}
+        {menuOpen && (
+          <div className="mobile-menu">
+            <div className="mobile-user-profile">
+              <UserProfile user={user} onLogout={handleLogout} />
+            </div>
+            <Link to="/" className="btn-pill" onClick={() => setMenuOpen(false)}>Home</Link>
+            <Link to="/contact" className="btn-pill" onClick={() => setMenuOpen(false)}>Contact Us</Link>
+            <DarkModeToggle />
+          </div>
+          )}
       </header>
 
       <main className="app-main">
