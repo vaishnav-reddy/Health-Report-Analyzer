@@ -14,9 +14,16 @@ const BackToTopButton = () => {
       top: 0,
       behavior: "smooth",
     });
-    // show tooltip briefly on click
     setShowTooltip(true);
     setTimeout(() => setShowTooltip(false), 1500);
+  };
+
+  // Keyboard handler: Enter or Space triggers scroll
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      scrollToTop();
+    }
   };
 
   useEffect(() => {
@@ -28,7 +35,10 @@ const BackToTopButton = () => {
     <div className={`back-to-top-wrapper ${isVisible ? "show" : "hide"}`}>
       <button
         onClick={scrollToTop}
+        onKeyDown={handleKeyPress}
         className="back-to-top"
+        tabIndex={0}
+        aria-label="Scroll back to top"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
