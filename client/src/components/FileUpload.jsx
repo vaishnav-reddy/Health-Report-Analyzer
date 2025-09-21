@@ -12,12 +12,9 @@ const FileUpload = ({ onFileProcessed, onError }) => {
 
   const { setLoading } = useLoading();
 
-  // Clean up OCR timer
   useEffect(() => {
     return () => {
-      if (ocrTimerRef.current) {
-        clearInterval(ocrTimerRef.current);
-      }
+      if (ocrTimerRef.current) clearInterval(ocrTimerRef.current);
     };
   }, []);
 
@@ -35,16 +32,12 @@ const FileUpload = ({ onFileProcessed, onError }) => {
     e.preventDefault();
     setIsDragOver(false);
     const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFileUpload(files[0]);
-    }
+    if (files.length > 0) handleFileUpload(files[0]);
   };
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      handleFileUpload(file);
-    }
+    if (file) handleFileUpload(file);
   };
 
   const handleFileUpload = async (file) => {
@@ -75,9 +68,7 @@ const FileUpload = ({ onFileProcessed, onError }) => {
         setProcessingOcr(true);
         setOcrProgress(0);
 
-        if (ocrTimerRef.current) {
-          clearInterval(ocrTimerRef.current);
-        }
+        if (ocrTimerRef.current) clearInterval(ocrTimerRef.current);
 
         ocrTimerRef.current = setInterval(() => {
           setOcrProgress((prev) => {
@@ -98,9 +89,7 @@ const FileUpload = ({ onFileProcessed, onError }) => {
       }
 
       const result = await uploadFile(file, (progress) => {
-        if (!processingOcr) {
-          setUploadProgress(progress);
-        }
+        if (!processingOcr) setUploadProgress(progress);
       });
 
       if (ocrTimerRef.current) {
@@ -124,7 +113,6 @@ const FileUpload = ({ onFileProcessed, onError }) => {
       }
     } catch (error) {
       console.error("File upload error:", error);
-
       if (ocrTimerRef.current) clearInterval(ocrTimerRef.current);
 
       if (error.message?.includes("No text could be extracted")) {
@@ -167,6 +155,14 @@ const FileUpload = ({ onFileProcessed, onError }) => {
     fileInputRef.current?.click();
   };
 
+  // Handle keyboard activation (Enter or Space)
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openFileDialog();
+    }
+  };
+
   return (
     <div className="file-upload-container">
       <div
@@ -175,6 +171,10 @@ const FileUpload = ({ onFileProcessed, onError }) => {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={openFileDialog}
+        onKeyDown={handleKeyPress}
+        tabIndex={0}
+        role="button"
+        aria-label="Upload your health report via click or drag-and-drop"
       >
         <div className="upload-icon">📄</div>
         <h3>Upload Your Health Report</h3>

@@ -1,4 +1,5 @@
 // import React from 'react';
+import { Link } from 'react-router-dom';
 import React, { useState } from 'react';  // ⬅ add useState
 import { useNavigate } from 'react-router-dom';
 import { FileText, Shield, Zap, TrendingUp, Clock, LogOut } from 'lucide-react';
@@ -43,10 +44,12 @@ export default function LandingPage({ user, setUser }) {
       <header className="landing-header">
         <div className="landing-header-content">
           <div className="landing-logo">
-            <FileText className="landing-logo-icon" />
-            {/* <img src="/Health%20Report%20Analyzer%20Logo.png" alt="Logo" className="logo-img" /> */}
-            <h1 className="landing-logo-text">Health Report Analyzer</h1>
-          </div>
+  <FileText className="landing-logo-icon" />
+   {/* <img src="/Health%20Report%20Analyzer%20Logo.png" alt="Logo" className="logo-img" /> */}
+  <Link to="/" className="landing-logo-text">
+    Health Report Analyzer
+  </Link>
+</div>
           <div className="landing-header-buttons">
             {user ? (
               <>

@@ -29,7 +29,9 @@ const Header = ({ user, setUser, isDashboard = false }) => {
       <div className="landing-header-content">
         <div className="landing-logo">
           <FileText className="landing-logo-icon" />
-          <h1 className="landing-logo-text">Health Report Analyzer</h1>
+         <Link to="/" className="landing-logo-text">
+    Health Report Analyzer
+  </Link>
         </div>
         
         {isDashboard ? (
