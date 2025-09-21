@@ -10,6 +10,7 @@ Landing Page Styles
 /* Navbar global alignment and width */
 .landing-header {
   width: 100%;
+  height: 4rem;
   left: 0;
   right: 0;
   position: sticky;
@@ -19,6 +20,8 @@ Landing Page Styles
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /* display: flex; */
+  align-items: center;
 }
 
 .landing-header-content {
@@ -27,6 +30,7 @@ Landing Page Styles
   padding: 0 2rem;
   display: flex;
   align-items: center;
+  height: 100%;
 }
 
 .landing-logo {
