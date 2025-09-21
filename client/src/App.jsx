@@ -24,7 +24,7 @@ import ContactUs from "./components/ContactUs";
 import { getCurrentUser } from "./utils/api";
 import "./styles/App.css";
 import FAQ from "./components/FAQ";
-import { FileText } from "lucide-react";
+import { FileText, Menu, X } from "lucide-react";
 import DarkModeToggle from "./components/DarkModeToggle";
 import { useLoading } from "./context/LoadingContext.jsx";
 
@@ -33,6 +33,7 @@ function Dashboard({ user, setUser }) {
   const [reportData, setReportData] = useState(null);
   const [trendData, setTrendData] = useState(null);
   const [error, setError] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { loading } = useLoading(); // use global loading state
 
@@ -80,16 +81,17 @@ function Dashboard({ user, setUser }) {
       <header className="landing-header">
         <div className="landing-header-content">
           {/* Logo clickable & keyboard accessible */}
-          <Link
-            to="/"
-            className="landing-logo"
-            aria-label="Go to Home"
-            tabIndex={0}
-          >
-            <FileText className="landing-logo-icon" />
-           <Link to="/" className="landing-logo-text">
-    Health Report Analyzer
-</Link>
+          <div className="landing-logo">
+            <Link
+              to="/"
+              aria-label="Go to Home"
+              tabIndex={0}
+            >
+              <FileText className="landing-logo-icon" />
+            </Link>
+            <Link to="/" className="landing-logo-text">
+              Health Report Analyzer
+            </Link>
             <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
