@@ -372,7 +372,7 @@ const handlePasswordChange = (e) => {
 
         <div className="auth-demo">
           <p className="demo-notice">
-            🚀 <strong>Secure Platform:</strong> Your data is securely stored in
+            🚀 <strong>Secure Platform :</strong> Your data is securely stored in
             our cloud database with industry-standard encryption and
             authentication.
           </p>
