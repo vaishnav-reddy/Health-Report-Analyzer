@@ -35,7 +35,7 @@ function Dashboard({ user, setUser }) {
   const [error, setError] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { loading } = useLoading(); // use global loading state
+  const { isLoading: loading } = useLoading(); // use global loading state
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -187,7 +187,7 @@ function Dashboard({ user, setUser }) {
 }
 
 function App() {
-  const { loading } = useLoading();
+  const { isLoading: loading } = useLoading();
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
