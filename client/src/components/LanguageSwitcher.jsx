@@ -31,7 +31,7 @@ export default function LanguageSwitcher({ value, className = '' }) {
 
   return (
     <div className={`language-switcher ${className}`}>
-      <Globe className="language-icon" size={16} />
+      {/* <Globe className="language-icon" size={16} /> */}
       <select
         value={current}
         onChange={handleChange}
