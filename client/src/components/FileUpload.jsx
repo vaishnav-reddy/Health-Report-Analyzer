@@ -10,7 +10,7 @@ const FileUpload = ({ onFileProcessed, onError }) => {
   const ocrTimerRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const { setLoading } = useLoading();
+  const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
     return () => {
@@ -58,7 +58,7 @@ const FileUpload = ({ onFileProcessed, onError }) => {
     }
 
     try {
-      setLoading(true);
+      showLoading();
       setUploadProgress(0);
 
       if (
@@ -97,6 +97,7 @@ const FileUpload = ({ onFileProcessed, onError }) => {
         setOcrProgress(100);
       }
 
+      hideLoading();
       if (result.isScannedDocument) {
         onFileProcessed(result);
         if (result.requiresManualEntry) {
