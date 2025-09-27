@@ -41,7 +41,7 @@ export default function LandingPage({ user, setUser }) {
     <div className="landing-container">
       {/* Header */}
       <header className="landing-header">
-        <div className="landing-header-content">
+        <div  data-aos="fade-up" className="landing-header-content">
           <div className="landing-logo">
             <FileText className="landing-logo-icon" />
             <Link to="/" className="landing-logo-text">
@@ -113,15 +113,16 @@ export default function LandingPage({ user, setUser }) {
       {/* Hero Section */}
       <section className="landing-hero-section">
         <div className="landing-hero-content">
-          <h1 className="landing-hero-title">
+
+          <h1 data-aos="fade-up" className="landing-hero-title">
             {t('homepage.hero_title')}
             <span className="landing-hero-subtitle">{t('app.subtitle')}</span>
           </h1>
-          <p className="landing-hero-description">
+          <p data-aos="fade-up" className="landing-hero-description">
             {t('homepage.hero_subtitle')}
           </p>
           <div className="landing-hero-button-container">
-            <button className="landing-primary-button" onClick={handleGetStartedClick}>
+            <button data-aos="fade-up" className="landing-primary-button" onClick={handleGetStartedClick}>
               {user ? t('nav.return_to_dashboard') : t('homepage.get_started')}
             </button>
           </div>
@@ -130,70 +131,81 @@ export default function LandingPage({ user, setUser }) {
 
       {/* Features Section */}
       <section className="landing-features-section">
-        <div className="landing-section-header">
-          <h2 className="landing-section-title">{t('homepage.features_title')}</h2>
-          <p className="landing-section-description">
+        <div data-aos="fade-up" aos-duration="740" className="landing-section-header">
+          <h2 className="landing-section-title" data-aos="fade-up">Why Choose Health Report Analyzer?</h2>
+          <p  data-aos="fade-up" aos-duration="740" className="landing-section-description">
+            Transform complex medical data into clear, actionable insights with our cutting-edge platform
+
+        <div data-aos="fade-up" aos-duration="740" className="landing-section-header">
+          <h2 data-aos="fade-up" className="landing-section-title">{t('homepage.features_title')}</h2>
+          <p  data-aos="fade-up" aos-duration="740" className="landing-section-description">
             {t('homepage.platform_desc')}
+
           </p>
         </div>
 
         <div className="landing-features-grid">
-          <div className="landing-feature-card">
+          <div data-aos="fade-up" aos-duration="740" className="landing-feature-card">
             <div className="landing-feature-header">
               <div className="landing-feature-icon landing-zap">
                 <Zap className="landing-icon landing-zap" />
               </div>
-              <h3 className="landing-feature-title">{t('homepage.feature_1_title')}</h3>
+
+              <h3  data-aos="fade-up" className="landing-feature-title">{t('homepage.feature_1_title')}</h3>
             </div>
-            <p className="landing-feature-description">
+            <p data-aos="fade-up" aos-duration="740" className="landing-feature-description">
               {t('homepage.feature_1_desc')}
+
             </p>
           </div>
 
-          <div className="landing-feature-card">
+          <div data-aos="fade-up" aos-duration="740" className="landing-feature-card">
             <div className="landing-feature-header">
               <div className="landing-feature-icon landing-shield">
                 <Shield className="landing-icon landing-shield" />
               </div>
-              <h3 className="landing-feature-title">{t('homepage.feature_2_title')}</h3>
+
+              <h3 data-aos="fade-up" className="landing-feature-title">{t('homepage.feature_2_title')}</h3>
             </div>
-            <p className="landing-feature-description">
+            <p data-aos="fade-up" className="landing-feature-description">
               {t('homepage.feature_2_desc')}
             </p>
           </div>
 
-          <div className="landing-feature-card">
+          <div data-aos="fade-up" aos-duration="740" className="landing-feature-card">
             <div className="landing-feature-header">
               <div className="landing-feature-icon landing-trending-up">
                 <TrendingUp className="landing-icon landing-trending-up" />
               </div>
-              <h3 className="landing-feature-title">{t('homepage.trend_tracking')}</h3>
+
+              <h3 data-aos="fade-up" className="landing-feature-title">{t('homepage.trend_tracking')}</h3>
             </div>
-            <p className="landing-feature-description">
+            <p data-aos="fade-up" aos-duration="740" className="landing-feature-description">
               {t('homepage.trend_tracking_desc')}
             </p>
           </div>
 
-          <div className="landing-feature-card">
+          <div data-aos="fade-up" aos-duration="740" className="landing-feature-card">
             <div className="landing-feature-header">
               <div className="landing-feature-icon landing-file-text">
                 <FileText className="landing-icon landing-file-text" />
               </div>
-              <h3 className="landing-feature-title">{t('homepage.feature_3_title')}</h3>
+              <h3 data-aos="fade-up" className="landing-feature-title">{t('homepage.feature_3_title')}</h3>
             </div>
-            <p className="landing-feature-description">
+            <p data-aos="fade-up" aos-duration="740" className="landing-feature-description">
               {t('homepage.feature_3_desc')}
             </p>
           </div>
 
-          <div className="landing-feature-card">
+          <div data-aos="fade-up" aos-duration="740" className="landing-feature-card">
             <div className="landing-feature-header">
               <div className="landing-feature-icon landing-clock">
                 <Clock className="landing-icon landing-clock" />
               </div>
-              <h3 className="landing-feature-title">{t('homepage.available_247')}</h3>
+
+              <h3 data-aos="fade-up" className="landing-feature-title">{t('homepage.available_247')}</h3>
             </div>
-            <p className="landing-feature-description">
+            <p data-aos="fade-up" aos-duration="740" className="landing-feature-description">
               {t('homepage.available_247_desc')}
             </p>
           </div>
@@ -203,17 +215,17 @@ export default function LandingPage({ user, setUser }) {
       {/* How It Works Section */}
       <section className="landing-how-it-works-section">
         <div className="landing-section-header">
-          <h2 className="landing-section-title">{t('homepage.how_it_works')}</h2>
-          <p className="landing-section-description">{t('homepage.how_it_works_desc')}</p>
+          <h2 data-aos="fade-up" className="landing-section-title">{t('homepage.how_it_works')}</h2>
+          <p data-aos="fade-up" aos-duration="740" className="landing-section-description">{t('homepage.how_it_works_desc')}</p>
         </div>
 
-        <div className="landing-steps-grid">
+        <div data-aos="fade-up" aos-duration="740" className="landing-steps-grid">
           <div className="landing-step">
             <div className="landing-step-number">
               <span className="landing-step-number-text">1</span>
             </div>
-            <h3 className="landing-step-title">{t('homepage.step_1_title')}</h3>
-            <p className="landing-step-description">
+            <h3 data-aos="fade-up" className="landing-step-title">{t('homepage.step_1_title')}</h3>
+            <p data-aos="fade-up" data-aos-duration="740" className="landing-step-description">
               {t('homepage.step_1_desc')}
             </p>
           </div>
@@ -222,8 +234,8 @@ export default function LandingPage({ user, setUser }) {
             <div className="landing-step-number">
               <span className="landing-step-number-text">2</span>
             </div>
-            <h3 className="landing-step-title">{t('homepage.step_2_title')}</h3>
-            <p className="landing-step-description">
+            <h3 data-aos="fade-up" className="landing-step-title">{t('homepage.step_2_title')}</h3>
+            <p data-aos="fade-up" data-aos-duration="740" className="landing-step-description">
               {t('homepage.step_2_desc')}
             </p>
           </div>
@@ -232,8 +244,8 @@ export default function LandingPage({ user, setUser }) {
             <div className="landing-step-number">
               <span className="landing-step-number-text">3</span>
             </div>
-            <h3 className="landing-step-title">{t('homepage.step_3_title')}</h3>
-            <p className="landing-step-description">{t('homepage.step_3_desc')}</p>
+            <h3 data-aos="fade-up" className="landing-step-title">{t('homepage.step_3_title')}</h3>
+            <p data-aos="fade-up" data-aos-duration="740" className="landing-step-description">{t('homepage.step_3_desc')}</p>
           </div>
         </div>
       </section>
@@ -241,11 +253,11 @@ export default function LandingPage({ user, setUser }) {
       {/* CTA Section */}
       <section className="landing-cta-section">
         <div className="landing-cta-card">
-          <h2 className="landing-cta-title">{t('homepage.cta_title')}</h2>
-          <p className="landing-cta-description">
+          <h2 data-aos="fade-up" data-aos-duration="740" className="landing-cta-title">{t('homepage.cta_title')}</h2>
+          <p  data-aos="fade-up" data-aos-duration="740" className="landing-cta-description">
             {t('homepage.cta_desc')}
           </p>
-          <div className="landing-cta-button-container">
+          <div data-aos="fade-up" data-aos-duration="740" className="landing-cta-button-container">
             <button className="landing-primary-button" onClick={handleGetStartedClick}>
               {user ? t('homepage.continue_dashboard') : t('homepage.start_free')}
             </button>
