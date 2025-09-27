@@ -135,6 +135,8 @@ export default function LandingPage({ user, setUser }) {
           <h2 className="landing-section-title" data-aos="fade-up">Why Choose Health Report Analyzer?</h2>
           <p  data-aos="fade-up" aos-duration="740" className="landing-section-description">
             Transform complex medical data into clear, actionable insights with our cutting-edge platform
+          </p>
+        </div>
 
         <div data-aos="fade-up" aos-duration="740" className="landing-section-header">
           <h2 data-aos="fade-up" className="landing-section-title">{t('homepage.features_title')}</h2>
