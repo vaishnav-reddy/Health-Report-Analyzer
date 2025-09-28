@@ -191,6 +191,7 @@
 .landing-logout-button,
 .btn-logout {
   background: rgba(255, 255, 255, 0.12);
+
   color: white;
   border: 2px solid transparent;
   padding: 0.6rem 1.6rem;
@@ -252,7 +253,17 @@
   align-items: center;
   margin-left: 0.5rem;
 }
+.landing-logout-button {
+  background: rgba(255, 30, 30, 0.2);
+  border-color: rgba(255, 30, 30, 0.3);
+}
 
+.landing-logout-button:hover {
+  background: rgba(255, 30, 30, 0.3);
+  border-color: rgba(255, 30, 30, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 /* Hero Section */
 .landing-hero-section {
   padding: 6rem 0 4rem;
@@ -336,12 +347,29 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
+.landing-contact-button {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
 
 .landing-primary-button:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
   background: linear-gradient(45deg, #5a6fd8, #6a42a0);
 }
+
+.landing-contact-button:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
 
 /* Features Section */
 .landing-features-section {
@@ -1125,7 +1153,6 @@
 .dark-mode .overlay-title { color: #f8fafc; }
 .dark-mode .overlay-text { color: #e2e8f0; }
 .dark-mode .overlay-subtext { color: #a1a1aa; }
-=======
 .dark-mode .btn-cancel:hover {
   background: #4b5563;
 }

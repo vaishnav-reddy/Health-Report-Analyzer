@@ -7,7 +7,29 @@ const authMiddleware = require('../utils/authMiddleware');
 const Report = require('../models/Report');
 const { extractHealthParameters } = require('../utils/parameterExtractor');
 
+//const pdfjsLib=require('pdfjs-dist');
 const router = express.Router();
+
+// extra helper to clean and structure OCR text
+function parseHealthParameters(text){
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const parameters=[];
+  lines.forEach(line=>{
+    //match patterns 
+    const match=line.match(/([A-Za-z ]+)[\:\-\=]\s*(\d+\.?\d*)\s*([A-Za-z\/%]*)?/);
+    if(match){
+      parameters.push({
+        name:match[1].trim(),
+        value:match[2],
+        unit:match[3],
+        normalRange:'N/A',
+        status:'UNKNOWN',
+        category:'General'
+      });
+    }
+  });
+  return parameters;
+}
 
 // Configure multer for in-memory file uploads (no disk storage)
 const upload = multer({
@@ -67,8 +89,17 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
       // Extract health parameters from the text
       const healthParameters = extractedText.length > 0 ? extractHealthParameters(extractedText) : [];
 
+      //fallback parser if nothing found
+      if(healthParameters.length===0){
+        const parsedParams=parseHealthParameters(extractedText);
+        if(parsedParams.length>0){
+          console.log('Fallback parser extracted parameters:',parsedParams);
+          healthParameters.push(...parsedParams);
+        }
+      }
       console.log('Extracted parameters:', healthParameters);
 
+      
       // If no parameters found and it's not a scanned document, reject
       if ((!healthParameters || healthParameters.length === 0) && !isScannedDocument) {
         console.log('No health parameters found in extracted text');
@@ -219,6 +250,32 @@ async function extractTextFromImageBuffer(buffer) {
   try {
     console.log('Starting OCR processing...');
     
+    const processedBuffer=await sharp(buffer)
+    .resize({width:2500,height:2500,fit:'inside',withoutEnlargement:true})
+    .grayscale()
+    .normalize()
+    .sharpen()
+    .threshold(120)
+    .toBuffer();
+    let bestText='';
+    let bestScore=0;
+    const {data:{text,confidence}}=await Tesseract.recognize(processedBuffer,'eng',{
+      logger:m=>{
+        if(m.status==='recognizing text' && m.progress===0){
+          console.log('OCR started with enhanced preprocessing...');
+        }
+      }
+    });
+    //simple scoring
+    const charCount=text.length;
+    const medicalTerms=(text.match(/(glucose|cholesterol|hemoglobin|mg\/dl|mmol\/l)/gi)||[]).length;
+    const score=(charCount*0.1)+(confidence*0.3)+(medicalTerms*5);
+    if(score>bestScore){
+      bestScore=score;
+      bestText=text;
+    }
+    
+
     // Get image metadata for better processing decisions
     const metadata = await sharp(buffer).metadata();
     

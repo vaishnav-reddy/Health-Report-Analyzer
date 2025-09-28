@@ -30,6 +30,8 @@ import { FileText, Menu, X } from "lucide-react";
 import DarkModeToggle from "./components/DarkModeToggle";
 import { useLoading } from "./context/LoadingContext.jsx";
 
+
+
 // Dashboard Component - Main authenticated app
 function Dashboard({ user, setUser }) {
   const { t } = useTranslation();
@@ -267,6 +269,7 @@ function App() {
     <Router>
       <div className="app">
         <Routes>
+
           {/* Landing page */}
           <Route
             path="/"
@@ -276,6 +279,14 @@ function App() {
                 <FAQ />
                 <Footer />
               </>
+            }
+          />
+        
+          {/* Landing page - default route for non-authenticated users */}
+          <Route
+            path="/home"
+            element={
+              user ? <Navigate to="/dashboard" /> : <Navigate to="/" />
             }
           />
 
@@ -442,6 +453,31 @@ function App() {
                   <Footer />
                 </>
               )
+            }
+          />
+          {/* Contact Us route */}
+          <Route
+            path="/contact"
+            element={
+              user ? (
+                <>
+                  <header className="app-header">
+                    <div className="header-content">
+                      <div className="header-text">
+                        <h1>🏥 Health Report Analyzer</h1>
+                        <p>We'd love to hear from you!</p>
+                      </div>
+                      <div className="header-actions">
+                        <Link to="/dashboard" className="btn-home">🏠 Back to Dashboard</Link>
+                      </div>
+                    </div>
+                  </header>
+                  <main className="app-main">
+                    <ContactUs user={user} />
+                  </main>
+                  <Footer />
+                </>
+              ) : <Navigate to="/login" />
             }
           />
 

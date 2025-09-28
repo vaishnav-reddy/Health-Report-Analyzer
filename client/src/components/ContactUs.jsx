@@ -1,10 +1,13 @@
+
 import React, { useState, useEffect } from "react";
 import "../styles/ContactUs.css";
+
 
 const ContactUs = ({ user }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
+
     name: user ? `${user.firstName} ${user.lastName}` : "",
     email: user ? user.email : "",
     subject: "",
@@ -35,9 +38,11 @@ const ContactUs = ({ user }) => {
     setIsSubmitting(true);
 
     try {
+
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+
         body: JSON.stringify({
           access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
           name: formData.name,
@@ -47,10 +52,12 @@ const ContactUs = ({ user }) => {
           from_name: formData.name,
           replyto: formData.email,
         }),
+
       });
 
       if (response.ok) {
         setShowSuccess(true);
+
         setFormData((prev) => ({
           ...prev,
           subject: "",

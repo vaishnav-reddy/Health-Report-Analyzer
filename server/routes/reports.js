@@ -26,7 +26,9 @@ router.get('/:id', authMiddleware, async (req, res) => {
     const report = await Report.findOne({
       _id: req.params.id,
       userId: req.user.id
-    }).lean();
+    })
+    .select('-extractedText')
+    .lean();
     
     if (!report) {
       return res.status(404).json({ error: 'Report not found' });

@@ -1055,6 +1055,7 @@
   transform: translateX(-50%);
   text-align: center;
 }
+
 .header-text::after {
   content: "";
   display: block;
@@ -1064,11 +1065,13 @@
   border-radius: 2px;
   background: linear-gradient(90deg, #6EE7F9, #A855F7, #F472B6); /* gradient colors */
 }
+
 .header-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
+
 
 /* ---------- Dashboard Buttons ---------- */
 .btn-home, .btn-contact {
@@ -1136,12 +1139,15 @@
 
 
 /* .btn-contact {
+
   background: linear-gradient(45deg, #667eea, #764ba2);
 }
 
 .btn-contact:hover {
   background: linear-gradient(45deg, #5a6fd8, #6a42a0);
+
 } */
+
 
 .auth-loading {
   display: flex;

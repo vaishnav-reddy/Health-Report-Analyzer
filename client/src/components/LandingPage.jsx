@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FileText, Shield, Zap, TrendingUp, Clock, LogOut } from 'lucide-react';
@@ -6,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import '../styles/landing.css';
 import DarkModeToggle from './DarkModeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
+
 
 export default function LandingPage({ user, setUser }) {
   const navigate = useNavigate();
@@ -124,6 +126,7 @@ export default function LandingPage({ user, setUser }) {
           <div className="landing-hero-button-container">
             <button data-aos="fade-up" className="landing-primary-button" onClick={handleGetStartedClick}>
               {user ? t('nav.return_to_dashboard') : t('homepage.get_started')}
+
             </button>
           </div>
         </div>
@@ -229,6 +232,7 @@ export default function LandingPage({ user, setUser }) {
             <h3 data-aos="fade-up" className="landing-step-title">{t('homepage.step_1_title')}</h3>
             <p data-aos="fade-up" data-aos-duration="740" className="landing-step-description">
               {t('homepage.step_1_desc')}
+
             </p>
           </div>
 
