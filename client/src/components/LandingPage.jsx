@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText, Shield, Zap, TrendingUp, Clock, LogOut } from 'lucide-react';
+import { FileText, Shield, Zap, TrendingUp, Clock, LogOut, Menu, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import '../styles/landing.css';
@@ -11,6 +11,7 @@ export default function LandingPage({ user, setUser }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [showDialog, setShowDialog] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSignInClick = () => {
     navigate('/login');
@@ -37,6 +38,14 @@ export default function LandingPage({ user, setUser }) {
     }
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <div className="landing-container">
       {/* Header */}
@@ -48,7 +57,8 @@ export default function LandingPage({ user, setUser }) {
               {t('app.title')}
             </Link>
           </div>
-          <div className="landing-header-buttons">
+          
+          <div className="landing-header-buttons desktop-nav">
             <div className="language-switcher-wrapper">
               <LanguageSwitcher />
             </div>
@@ -81,10 +91,99 @@ export default function LandingPage({ user, setUser }) {
             )}
             <DarkModeToggle />
           </div>
+
+          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {isMobileMenuOpen && (
+          <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
+            <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-menu-header">
+                <span className="mobile-menu-title">{t('app.title')}</span>
+                <button className="mobile-menu-close" onClick={closeMobileMenu}>
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="mobile-menu-content">
+                <div className="mobile-menu-item">
+                  <LanguageSwitcher />
+                </div>
+                
+                {user ? (
+                  <>
+                    <button 
+                      className="mobile-menu-btn"
+                      onClick={() => {
+                        navigate('/dashboard');
+                        closeMobileMenu();
+                      }}
+                    >
+                      {t('nav.return_to_dashboard')}
+                    </button>
+                    <button 
+                      className="mobile-menu-btn"
+                      onClick={() => {
+                        navigate('/contact');
+                        closeMobileMenu();
+                      }}
+                    >
+                      {t('nav.contact')}
+                    </button>
+                    <button 
+                      className="mobile-menu-btn mobile-logout-btn"
+                      onClick={() => {
+                        setShowDialog(true);
+                        closeMobileMenu();
+                      }}
+                    >
+                      <LogOut size={16} />
+                      {t('auth.logout')}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button 
+                      className="mobile-menu-btn"
+                      onClick={() => {
+                        handleSignInClick();
+                        closeMobileMenu();
+                      }}
+                    >
+                      {t('auth.login')}
+                    </button>
+                    <button 
+                      className="mobile-menu-btn"
+                      onClick={() => {
+                        navigate('/contact');
+                        closeMobileMenu();
+                      }}
+                    >
+                      {t('nav.contact')}
+                    </button>
+                    <button 
+                      className="mobile-menu-btn mobile-signup-btn"
+                      onClick={() => {
+                        handleSignUpClick();
+                        closeMobileMenu();
+                      }}
+                    >
+                      {t('auth.signup')}
+                    </button>
+                  </>
+                )}
+                
+                <div className="mobile-menu-item">
+                  <DarkModeToggle />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Floating overlay confirmation (top-right) */}
       {showDialog && (
         <div className="overlay-popup" role="dialog" aria-modal="true">
           <div className="overlay-card">
@@ -110,7 +209,6 @@ export default function LandingPage({ user, setUser }) {
         </div>
       )}
 
-      {/* Hero Section */}
       <section className="landing-hero-section">
         <div className="landing-hero-content">
           <h1 className="landing-hero-title">
@@ -128,7 +226,6 @@ export default function LandingPage({ user, setUser }) {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="landing-features-section">
         <div className="landing-section-header">
           <h2 className="landing-section-title">{t('homepage.features_title')}</h2>
@@ -200,7 +297,6 @@ export default function LandingPage({ user, setUser }) {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section className="landing-how-it-works-section">
         <div className="landing-section-header">
           <h2 className="landing-section-title">{t('homepage.how_it_works')}</h2>
@@ -238,7 +334,6 @@ export default function LandingPage({ user, setUser }) {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="landing-cta-section">
         <div className="landing-cta-card">
           <h2 className="landing-cta-title">{t('homepage.cta_title')}</h2>

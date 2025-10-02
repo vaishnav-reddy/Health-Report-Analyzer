@@ -38,7 +38,7 @@ function Dashboard({ user, setUser }) {
   const [error, setError] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { loading } = useLoading(); // use global loading state
+  const { loading } = useLoading();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -83,7 +83,6 @@ function Dashboard({ user, setUser }) {
 
       <header className="landing-header app-header">
         <div className="landing-header-content">
-          {/* Logo clickable & keyboard accessible */}
           <div className="landing-logo">
             <Link
               to="/"
@@ -226,18 +225,15 @@ function App() {
     checkAuth();
   }, [t]);
 
-  // Set document language attribute for accessibility and SEO
   useEffect(() => {
     document.documentElement.lang = i18n.language || 'en';
     document.title = t('app.title');
   }, [i18n.language, t]);
 
-  // Listen for language changes and update document language
   useEffect(() => {
     const handleLanguageChange = (lng) => {
       document.documentElement.lang = lng;
       document.title = t('app.title');
-      // Update page direction for RTL languages (if needed in future)
       document.documentElement.dir = lng === 'ar' || lng === 'he' ? 'rtl' : 'ltr';
     };
 
@@ -285,7 +281,7 @@ function App() {
             element={user ? <Navigate to="/dashboard" /> : <Navigate to="/" />}
           />
 
-          {/* Login */}
+          {/* Login - AuthForm has its own responsive header */}
           <Route
             path="/login"
             element={
@@ -293,39 +289,14 @@ function App() {
                 <Navigate to="/dashboard" />
               ) : (
                 <>
-                  <header className="app-header">
-                    <div className="header-content">
-                      <div className="header-text">
-                        <Link to="/" className="landing-logo-text">
-                          {t('app.title')}
-                        </Link>
-                        <p>{t('app.subtitle')}</p>
-                      </div>
-                      <div className="header-actions">
-                        <div className="language-switcher-wrapper">
-                          <LanguageSwitcher />
-                        </div>
-                        <Link
-                          to="/"
-                          className="btn-home"
-                          tabIndex={0}
-                          aria-label={t('nav.home')}
-                        >
-                          {t('nav.home')}
-                        </Link>
-                      </div>
-                    </div>
-                  </header>
-                  <main className="app-main">
-                    <AuthForm onLogin={handleLogin} isLogin={true} />
-                  </main>
+                  <AuthForm onLogin={handleLogin} isLogin={true} />
                   <Footer />
                 </>
               )
             }
           />
 
-          {/* Signup */}
+          {/* Signup - AuthForm has its own responsive header */}
           <Route
             path="/signup"
             element={
@@ -333,39 +304,14 @@ function App() {
                 <Navigate to="/dashboard" />
               ) : (
                 <>
-                  <header className="app-header">
-                    <div className="header-content">
-                      <div className="header-text">
-                        <Link to="/" className="landing-logo-text">
-                          {t('app.title')}
-                        </Link>
-                        <p>{t('app.subtitle')}</p>
-                      </div>
-                      <div className="header-actions">
-                        <div className="language-switcher-wrapper">
-                          <LanguageSwitcher />
-                        </div>
-                        <Link
-                          to="/"
-                          className="btn-home"
-                          tabIndex={0}
-                          aria-label={t('nav.home')}
-                        >
-                          {t('nav.home')}
-                        </Link>
-                      </div>
-                    </div>
-                  </header>
-                  <main className="app-main">
-                    <AuthForm onLogin={handleLogin} isLogin={false} />
-                  </main>
+                  <AuthForm onLogin={handleLogin} isLogin={false} />
                   <Footer />
                 </>
               )
             }
           />
 
-          {/* Forgot Password */}
+          {/* Forgot Password - has its own responsive header */}
           <Route
             path="/forgot-password"
             element={
@@ -373,39 +319,14 @@ function App() {
                 <Navigate to="/dashboard" />
               ) : (
                 <>
-                  <header className="app-header">
-                    <div className="header-content">
-                      <div className="header-text">
-                        <Link to="/" className="landing-logo-text">
-                          {t('app.title')}
-                        </Link>
-                        <p>{t('auth.forgot_password')}</p>
-                      </div>
-                      <div className="header-actions">
-                        <div className="language-switcher-wrapper">
-                          <LanguageSwitcher />
-                        </div>
-                        <Link
-                          to="/"
-                          className="btn-home"
-                          tabIndex={0}
-                          aria-label={t('nav.home')}
-                        >
-                          {t('nav.home')}
-                        </Link>
-                      </div>
-                    </div>
-                  </header>
-                  <main className="app-main">
-                    <ForgotPassword />
-                  </main>
+                  <ForgotPassword />
                   <Footer />
                 </>
               )
             }
           />
 
-          {/* Reset Password */}
+          {/* Reset Password - has its own responsive header */}
           <Route
             path="/reset-password/:token"
             element={
@@ -413,32 +334,7 @@ function App() {
                 <Navigate to="/dashboard" />
               ) : (
                 <>
-                  <header className="app-header">
-                    <div className="header-content">
-                      <div className="header-text">
-                        <Link to="/" className="landing-logo-text">
-                          {t('app.title')}
-                        </Link>
-                        <p>{t('auth.confirm_password')}</p>
-                      </div>
-                      <div className="header-actions">
-                        <div className="language-switcher-wrapper">
-                          <LanguageSwitcher />
-                        </div>
-                        <Link
-                          to="/"
-                          className="btn-home"
-                          tabIndex={0}
-                          aria-label={t('nav.home')}
-                        >
-                          {t('nav.home')}
-                        </Link>
-                      </div>
-                    </div>
-                  </header>
-                  <main className="app-main">
-                    <ResetPassword />
-                  </main>
+                  <ResetPassword />
                   <Footer />
                 </>
               )
@@ -451,26 +347,27 @@ function App() {
             element={
               user ? (
                 <>
-                  <header className="app-header">
-                    <div className="header-content">
-                      <div className="header-text">
-                        <Link to="/" className="landing-logo-text">
+                  <header className="auth-header">
+                    <div className="auth-header-content">
+                      <div className="auth-logo">
+                        <FileText className="auth-logo-icon" />
+                        <Link to="/" className="auth-logo-text">
                           {t('app.title')}
                         </Link>
-                        <p>{t('contact.subtitle')}</p>
                       </div>
-                      <div className="header-actions">
+                      <div className="auth-header-buttons">
                         <div className="language-switcher-wrapper">
                           <LanguageSwitcher />
                         </div>
                         <Link
                           to="/dashboard"
-                          className="btn-home"
+                          className="auth-home-button"
                           tabIndex={0}
                           aria-label={t('nav.return_to_dashboard')}
                         >
                           {t('nav.return_to_dashboard')}
                         </Link>
+                        <DarkModeToggle />
                       </div>
                     </div>
                   </header>
