@@ -12,6 +12,14 @@ const PORT = process.env.PORT || 5001;
 // Set server timeout to 5 minutes for OCR processing
 app.timeout = 300000;
 
+//Ensure Express handles large payloads for OCR images
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+
+//Ensure Express handles large payloads for OCR images
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+
 // Configure CORS for frontend communication
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
@@ -28,6 +36,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/reports', require('./routes/reports'));
+
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -46,6 +55,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+//Centralized error handler 
+// app.use((err, req, res, next) => {
+//   console.error("Server error:",err);
+//   res.status(500).json({ error:err.message|| 'Internal Server Error' });
+// });
 app.listen(PORT, () => {
   // Server started successfully
   console.log(`Server is running on port ${PORT}`);

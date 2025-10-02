@@ -9,13 +9,23 @@ const FileUpload = ({ onFileProcessed, onError }) => {
   const [ocrProgress, setOcrProgress] = useState(0);
   const ocrTimerRef = useRef(null);
   const fileInputRef = useRef(null);
+  
+  //Reset state helper
+  const resetProgress=()=>{
+    setUploadProgress(0);
+    setProcessingOcr(false);
+    setOcrProgress(0);
+    if (ocrTimerRef.current) {
+      clearInterval(ocrTimerRef.current);
+    }
+  }
 
   const { showLoading, hideLoading } = useLoading();
 
+  // Clean up the timer when component unmounts
+
   useEffect(() => {
-    return () => {
-      if (ocrTimerRef.current) clearInterval(ocrTimerRef.current);
-    };
+    return () => resetProgress(); //ensure cleanup
   }, []);
 
   const handleDragOver = (e) => {
@@ -144,7 +154,9 @@ const FileUpload = ({ onFileProcessed, onError }) => {
         onError(error.message || "Upload failed. Please try again.");
       }
     } finally {
+
       setLoading(false);
+      resetProgress();
       setUploadProgress(0);
       setProcessingOcr(false);
       setOcrProgress(0);

@@ -1,49 +1,97 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe } from 'lucide-react';
 
 const languages = [
   { code: 'en', label: 'English', flag: '🇺🇸' },
   { code: 'hi', label: 'हिन्दी', flag: '🇮🇳' }
 ];
 
-export default function LanguageSwitcher({ value, className = '' }) {
+export default function LanguageSwitcher({ value, className = '', darkMode = true }) {
   const { i18n } = useTranslation();
+  const [open, setOpen] = useState(false);
 
   const getCurrent = () => {
-    // prefer provided prop, otherwise use i18n.language and normalize
     const langFromI18n = i18n.language ? i18n.language.split('-')[0] : 'en';
     return value || langFromI18n || 'en';
-  };
-
-  const handleChange = (e) => {
-    const lng = e.target.value;
-    i18n.changeLanguage(lng);
-    try { 
-      localStorage.setItem('i18nextLng', lng); 
-    } catch (err) { 
-      console.warn('Could not save language preference:', err);
-    }
   };
 
   const current = getCurrent();
   const currentLanguage = languages.find(lang => lang.code === current) || languages[0];
 
+  const handleChange = (lng) => {
+    i18n.changeLanguage(lng);
+    setOpen(false);
+    try { localStorage.setItem('i18nextLng', lng); } catch (err) { console.warn(err); }
+  };
+
+  const dropdownRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Dynamic background & text color for dark/light mode
+  const dropdownBg = darkMode ? 'rgba(32, 28, 28, 0.88)' : '#f1f1f1';
+  const dropdownText = darkMode ? '#fff' : '#000';
+  const hoverBg = darkMode ? 'rgba(50, 50, 50, 0.88)' : '#ddd';
+  const selectedBg = darkMode ? 'rgba(70, 70, 70, 0.88)' : '#ccc';
+
   return (
-    <div className={`language-switcher ${className}`}>
-      {/* <Globe className="language-icon" size={16} /> */}
-      <select
-        value={current}
-        onChange={handleChange}
-        aria-label="Select language"
+    <div className={`language-switcher ${className}`} ref={dropdownRef} style={{ position: 'relative' }}>
+      {/* Button with arrow */}
+      <button
+        onClick={() => setOpen(!open)}
         className="language-select"
+        style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
       >
-        {languages.map((lang) => (
-          <option key={lang.code} value={lang.code}>
-            {lang.flag} {lang.label}
-          </option>
-        ))}
-      </select>
+        {currentLanguage.flag} {currentLanguage.label} {open ? '▲' : '▼'}
+      </button>
+
+      {open && (
+        <div
+          className="language-dropdown"
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            width: '100%',
+            marginTop: '4px',
+            background: dropdownBg,
+            borderRadius: '8px',
+            overflow: 'hidden',
+            zIndex: 10,
+            boxShadow: darkMode
+              ? '0 4px 12px rgba(0,0,0,0.5)'
+              : '0 4px 12px rgba(0,0,0,0.15)'
+          }}
+        >
+          {languages.map(lang => (
+            <div
+              key={lang.code}
+              onClick={() => handleChange(lang.code)}
+              style={{
+                padding: '8px 12px',
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+                cursor: 'pointer',
+                backgroundColor: lang.code === current ? selectedBg : 'transparent',
+                color: dropdownText,
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = hoverBg}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = lang.code === current ? selectedBg : 'transparent'}
+            >
+              <span>{lang.flag}</span>
+              <span>{lang.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

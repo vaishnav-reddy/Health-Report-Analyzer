@@ -33,6 +33,7 @@ const ForgotPassword = () => {
     } catch (error) {
       console.error("Forgot password error:", error);
       setMessage(error.message || t('forgot_password_form.error_sending'));
+
     } finally {
       setLoading(false);
     }

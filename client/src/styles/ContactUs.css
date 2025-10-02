@@ -1,3 +1,4 @@
+
 .contact-page {
   min-height: 100vh;
   display: flex;
@@ -51,6 +52,7 @@
   text-align: center;
 }
 
+
 .contact-container.dark .form-notice {
   background-color: #2e2e2e;
   border-color: #444;
@@ -65,11 +67,11 @@
 .contact-container.dark .form-notice p {
   color: #a0e3a0;
 }
-
 .contact-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
 }
 
 .form-group {
@@ -131,6 +133,11 @@
   outline: none;
 }
 
+.form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
 .submit-btn {
   background-color: #3498db;
   color: white;
@@ -151,7 +158,6 @@
   background-color: #95a5a6;
   cursor: not-allowed;
 }
-
 .success-container {
   text-align: center;
   padding: 2rem;
@@ -172,8 +178,31 @@
   margin-bottom: 2rem;
 }
 
+
 .contact-container.dark .success-container p {
   color: #ccc;
+
+.success-details {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.success-details h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.success-details p {
+  margin: 0.5rem 0;
+  color: #495057;
 }
 
 .success-actions {
@@ -199,6 +228,23 @@
   background-color: #2980b9;
 }
 
+
+.btn-view-alternatives {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+}
+
+.btn-view-alternatives:hover {
+  background-color: #5a6268;
+}
+
 @media (max-width: 768px) {
   .contact-container {
     padding: 1.5rem;
@@ -210,8 +256,18 @@
     align-items: center;
   }
 
+
   .btn-send-another {
     width: 100%;
     max-width: 300px;
   }
 }
+
+  
+  .btn-send-another,
+  .btn-view-alternatives {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+

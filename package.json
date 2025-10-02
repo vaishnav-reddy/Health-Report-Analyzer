@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "all": "^0.0.0",
+    "aos": "^2.3.4",
     "fuzzy-search": "^3.2.1",
     "lucide-react": "^0.539.0",
     "nodemailer": "^7.0.5",
