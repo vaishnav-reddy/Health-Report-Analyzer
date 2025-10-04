@@ -3,9 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { login, register, googleAuth } from "../utils/api";
 import { toast } from 'react-toastify';
+import { FileText, Menu, X, Home } from 'lucide-react';
 import "../styles/AuthForm.css";
 import GoogleButton from "react-google-button";
 import { auth, provider, signInWithPopup } from "./firebase.jsx";
+import DarkModeToggle from './DarkModeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
 
 // SVG Icon for password visibility toggle
 const EyeIcon = ({ size = 20, color = "#6b7280" }) => (
@@ -50,6 +53,7 @@ const validatePassword = (password) => {
 const AuthForm = ({ onLogin, isLogin: isLoginProp }) => {
   const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(isLoginProp);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -98,6 +102,14 @@ const AuthForm = ({ onLogin, isLogin: isLoginProp }) => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   const handleGoogleSignIn = async () => {
@@ -216,164 +228,227 @@ const AuthForm = ({ onLogin, isLogin: isLoginProp }) => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2>{isLogin ? t('auth.signin_title') : t('auth.signup_title')}</h2>
-          <p>
-            {isLogin
-              ? t('auth_form.signin_description')
-              : t('auth_form.signup_description')}
-          </p>
+    <div className="auth-page">
+      {/* Auth Page Header */}
+      <header className="auth-header">
+        <div className="auth-header-content">
+          <div className="auth-logo">
+            <FileText className="auth-logo-icon" />
+            <Link to="/" className="auth-logo-text">
+              {t('app.title')}
+            </Link>
+          </div>
+          
+          <div className="auth-header-buttons desktop-nav">
+            <div className="language-switcher-wrapper">
+              <LanguageSwitcher />
+            </div>
+            <button className="auth-home-button" onClick={() => navigate('/')}>
+              <Home size={16} />
+              Home
+            </button>
+            <DarkModeToggle />
+          </div>
+
+          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
 
-        {error && <div className="auth-error">❌ {error}</div>}
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          {/* Register fields */}
-          {!isLogin && (
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="firstName">{t('auth_form.first_name')}</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required={!isLogin}
-                  placeholder={t('auth_form.first_name_placeholder')}
-                />
+        {isMobileMenuOpen && (
+          <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
+            <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-menu-header">
+                <span className="mobile-menu-title">{t('app.title')}</span>
+                <button className="mobile-menu-close" onClick={closeMobileMenu}>
+                  <X size={20} />
+                </button>
               </div>
-              <div className="form-group">
-                <label htmlFor="lastName">{t('auth_form.last_name')}</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required={!isLogin}
-                  placeholder={t('auth_form.last_name_placeholder')}
-                />
+              
+              <div className="mobile-menu-content">
+                <div className="mobile-menu-item">
+                  <LanguageSwitcher />
+                </div>
+                
+                <button 
+                  className="mobile-menu-btn"
+                  onClick={() => {
+                    navigate('/');
+                    closeMobileMenu();
+                  }}
+                >
+                  <Home size={16} />
+                  Home
+                </button>
+                
+                <div className="mobile-menu-item">
+                  <DarkModeToggle />
+                </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
+      </header>
 
-          <div className="form-group">
-            <label htmlFor="email">{t('auth.email')}</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder={t('auth_form.email_placeholder')}
-            />
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h2>{isLogin ? t('auth.signin_title') : t('auth.signup_title')}</h2>
+            <p>
+              {isLogin
+                ? t('auth_form.signin_description')
+                : t('auth_form.signup_description')}
+            </p>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">{t('auth.password')}</label>
-            <div className="password-input-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handlePasswordChange}
-                required
-                placeholder={t('auth_form.password_placeholder')}
-                minLength={8}
-              />
-              <span
-                className="password-toggle-icon"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-              </span>
-            </div>
+          {error && <div className="auth-error">❌ {error}</div>}
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            {/* Register fields */}
             {!isLogin && (
-              <ul className="password-checklist">
-                <li className={passwordChecks.length ? "valid" : "invalid"}>{t('auth_form.password_requirements.length')}</li>
-                <li className={passwordChecks.upper ? "valid" : "invalid"}>{t('auth_form.password_requirements.upper')}</li>
-                <li className={passwordChecks.lower ? "valid" : "invalid"}>{t('auth_form.password_requirements.lower')}</li>
-                <li className={passwordChecks.number ? "valid" : "invalid"}>{t('auth_form.password_requirements.number')}</li>
-                <li className={passwordChecks.special ? "valid" : "invalid"}>{t('auth_form.password_requirements.special')}</li>
-              </ul>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="firstName">{t('auth_form.first_name')}</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required={!isLogin}
+                    placeholder={t('auth_form.first_name_placeholder')}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="lastName">{t('auth_form.last_name')}</label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required={!isLogin}
+                    placeholder={t('auth_form.last_name_placeholder')}
+                  />
+                </div>
+              </div>
             )}
-          </div>
 
-          {!isLogin && (
             <div className="form-group">
-              <label htmlFor="confirmPassword">{t('auth.confirm_password')}</label>
+              <label htmlFor="email">{t('auth.email')}</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder={t('auth_form.email_placeholder')}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">{t('auth.password')}</label>
               <div className="password-input-container">
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handlePasswordChange}
                   required
-                  placeholder={t('validation.confirm_password_placeholder')}
+                  placeholder={t('auth_form.password_placeholder')}
                   minLength={8}
                 />
                 <span
                   className="password-toggle-icon"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </span>
               </div>
+              {!isLogin && (
+                <ul className="password-checklist">
+                  <li className={passwordChecks.length ? "valid" : "invalid"}>{t('auth_form.password_requirements.length')}</li>
+                  <li className={passwordChecks.upper ? "valid" : "invalid"}>{t('auth_form.password_requirements.upper')}</li>
+                  <li className={passwordChecks.lower ? "valid" : "invalid"}>{t('auth_form.password_requirements.lower')}</li>
+                  <li className={passwordChecks.number ? "valid" : "invalid"}>{t('auth_form.password_requirements.number')}</li>
+                  <li className={passwordChecks.special ? "valid" : "invalid"}>{t('auth_form.password_requirements.special')}</li>
+                </ul>
+              )}
             </div>
-          )}
 
-          <button type="submit" className="btn-auth-submit" disabled={loading}>
-            {loading ? (
-              <span>
-                <span className="spinner-small"></span>
-                {isLogin ? t('auth_form.signing_in') : t('auth_form.creating_account')}
-              </span>
-            ) : isLogin ? (
-              t('auth.login')
-            ) : (
-              t('auth.signup')
+            {!isLogin && (
+              <div className="form-group">
+                <label htmlFor="confirmPassword">{t('auth.confirm_password')}</label>
+                <div className="password-input-container">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    placeholder={t('validation.confirm_password_placeholder')}
+                    minLength={8}
+                  />
+                  <span
+                    className="password-toggle-icon"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </span>
+                </div>
+              </div>
             )}
-          </button>
 
-          {/* Forgot password link */}
-          {isLogin && (
-            <div style={{ marginTop: "1rem", textAlign: "right" }}>
-              <Link
-                to="/forgot-password"
-                style={{
-                  color: "#007bff",
-                  textDecoration: "none",
-                }}
-              >
-                {t('auth.forgot_password')}
-              </Link>
-            </div>
-          )}
-        </form>
-        
-        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
-          <GoogleButton onClick={handleGoogleSignIn} />
-        </div>
-
-        <div className="auth-toggle">
-          <p>
-            {isLogin ? t('auth.no_account') : t('auth.have_account')}{" "}
-            <button type="button" onClick={toggleMode} className="btn-toggle">
-              {isLogin ? t('auth_form.create_one') : t('auth_form.sign_in')}
+            <button type="submit" className="btn-auth-submit" disabled={loading}>
+              {loading ? (
+                <span>
+                  <span className="spinner-small"></span>
+                  {isLogin ? t('auth_form.signing_in') : t('auth_form.creating_account')}
+                </span>
+              ) : isLogin ? (
+                t('auth.login')
+              ) : (
+                t('auth.signup')
+              )}
             </button>
-          </p>
-        </div>
 
-        <div className="auth-demo">
-          <p className="demo-notice">
-            🚀 <strong>{t('auth_form.secure_platform')}:</strong> {t('auth_form.secure_description')}
-          </p>
+            {/* Forgot password link */}
+            {isLogin && (
+              <div style={{ marginTop: "1rem", textAlign: "right" }}>
+                <Link
+                  to="/forgot-password"
+                  style={{
+                    color: "#007bff",
+                    textDecoration: "none",
+                  }}
+                >
+                  {t('auth.forgot_password')}
+                </Link>
+              </div>
+            )}
+          </form>
+          
+          <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
+            <GoogleButton onClick={handleGoogleSignIn} />
+          </div>
+
+          <div className="auth-toggle">
+            <p>
+              {isLogin ? t('auth.no_account') : t('auth.have_account')}{" "}
+              <button type="button" onClick={toggleMode} className="btn-toggle">
+                {isLogin ? t('auth_form.create_one') : t('auth_form.sign_in')}
+              </button>
+            </p>
+          </div>
+
+          <div className="auth-demo">
+            <p className="demo-notice">
+              🚀 <strong>{t('auth_form.secure_platform')}:</strong> {t('auth_form.secure_description')}
+            </p>
+          </div>
         </div>
       </div>
     </div>
