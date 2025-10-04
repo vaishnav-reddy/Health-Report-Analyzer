@@ -26,7 +26,7 @@ import LanguageSwitcher from "./components/LanguageSwitcher";
 import { getCurrentUser } from "./utils/api";
 import "./styles/App.css";
 import FAQ from "./components/FAQ";
-import { FileText, Menu, X } from "lucide-react";
+import { FileText, Menu, X, LogOut } from "lucide-react";
 import DarkModeToggle from "./components/DarkModeToggle";
 import { useLoading } from "./context/LoadingContext.jsx";
 
@@ -35,10 +35,11 @@ import { useLoading } from "./context/LoadingContext.jsx";
 // Dashboard Component - Main authenticated app
 function Dashboard({ user, setUser }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [reportData, setReportData] = useState(null);
   const [trendData, setTrendData] = useState(null);
   const [error, setError] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const { loading } = useLoading();
 
@@ -50,6 +51,14 @@ function Dashboard({ user, setUser }) {
     setTrendData(null);
     setError(null);
     toast.success(t('toast.logout_success'));
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   const handleFileProcessed = (data) => {
@@ -86,40 +95,20 @@ function Dashboard({ user, setUser }) {
       <header className="landing-header app-header">
         <div className="landing-header-content">
           <div className="landing-logo">
-            <Link
-              to="/"
-              aria-label={t('nav.home')}
-              tabIndex={0}
-            >
+            <Link to="/" aria-label={t('nav.home')} tabIndex={0}>
               <FileText className="landing-logo-icon" />
             </Link>
             <Link to="/" className="landing-logo-text" style={{ paddingBottom: '0.5rem' }}>
               {t('app.title')}
             </Link>
-            <button 
-              className="hamburger-btn" 
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
           </div>
 
-          <div className="nav-button user-section">
-            <Link
-              to="/"
-              className="btn-home"
-              aria-label={t('nav.home')}
-              tabIndex={0}
-            >
+          {/* Desktop Navigation */}
+          <div className="nav-button user-section desktop-nav">
+            <Link to="/" className="btn-home" aria-label={t('nav.home')} tabIndex={0}>
               {t('nav.home')}
             </Link>
-            <Link
-              to="/contact"
-              className="btn-contact"
-              aria-label={t('nav.contact')}
-              tabIndex={0}
-            >
+            <Link to="/contact" className="btn-contact" aria-label={t('nav.contact')} tabIndex={0}>
               {t('nav.contact')}
             </Link>
 
@@ -137,7 +126,67 @@ function Dashboard({ user, setUser }) {
 
             <DarkModeToggle aria-label="Toggle Dark Mode" tabIndex={0} />
           </div>
+
+          {/* Mobile Hamburger Button */}
+          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
+            <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-menu-header">
+                <span className="mobile-menu-title">{t('app.title')}</span>
+                <button className="mobile-menu-close" onClick={closeMobileMenu}>
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="mobile-menu-content">
+                <div className="mobile-menu-item">
+                  <LanguageSwitcher />
+                </div>
+                
+                <button 
+                  className="mobile-menu-btn"
+                  onClick={() => {
+                    navigate('/');
+                    closeMobileMenu();
+                  }}
+                >
+                  {t('nav.home')}
+                </button>
+
+                <button 
+                  className="mobile-menu-btn"
+                  onClick={() => {
+                    navigate('/contact');
+                    closeMobileMenu();
+                  }}
+                >
+                  {t('nav.contact')}
+                </button>
+
+                <button 
+                  className="mobile-menu-btn mobile-logout-btn"
+                  onClick={() => {
+                    handleLogout();
+                    closeMobileMenu();
+                  }}
+                >
+                  <LogOut size={16} />
+                  {t('auth.logout')}
+                </button>
+                
+                <div className="mobile-menu-item">
+                  <DarkModeToggle />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="app-main">
